@@ -1,5 +1,6 @@
 import sr.robot3
 import cv2 as cv
+import math
 
 '''
 Assumptions I am making:
@@ -8,12 +9,10 @@ Assumptions I am making:
 - Robot goes for closest marker (asterioid) first
 '''
 # ini
-robot = sr.robot3.Robot()
-
-current_markers = []
 
 
-def cv2marker(save=False, dev=False):
+
+def vision_run(save=False, dev=False):
     if not dev:
         # cv2 will allow us to adjust image info and make manipulations such as contrast if needed
         frame = robot.camera.capture()
@@ -21,13 +20,15 @@ def cv2marker(save=False, dev=False):
         markers = robot.camera.see(frame)
     else:  # capture doesnt work in simulation
         markers = robot.camera.see()
-    if markers:
-        current_markers = markers
-        target_marker = marker_sort(current_markers)
-        movement_calculate(target_marker)
+
+    current_markers = markers
     if not markers:
         current_markers.clear()
-
+        return False
+    elif markers:
+        target_marker = marker_sort(current_markers)
+        move_values = movement_calculate(target_marker)
+        return move_values
 
 def marker_sort(current_markers):
     # sort markers by distance,
@@ -49,20 +50,14 @@ def markerpos(marker):
 
 
 def movement_calculate(target):
-    '''
-    For this section, I need to use the simulator to figure out a method
-    of converting relative positions of the marker into instructions for
-    controlling the movement, assumably this would be first centering the
-    marker in the frame by turning so the centre of the marker is at the same
-    pos as the centre of the camera, then moving to a fixed distance from the marker,
-    from where it can pick up the marker.
-
-    However, in DOCS, pixel coords needs to be used with the physical robot kit so we need
-    to set up the webcam and print out a marker
-    '''
+    mov_angle = math.degrees(target.position.horizontal_angle())
+    return [mov_angle, target.position.distance]
 
 
 if __name__ == "__main__":
+    robot = sr.robot3.Robot()
+
+    current_markers = []
     '''
     Values are set for testing, this script is not designed to be ran as a stand-alone
     script and instead as a module for other scripts to call upon
@@ -70,4 +65,4 @@ if __name__ == "__main__":
     as robot.py is called upon by another function
     '''
     while True:
-        cv2marker(False, True)
+        vision_run(False, True)
