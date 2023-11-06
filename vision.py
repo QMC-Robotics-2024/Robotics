@@ -6,7 +6,7 @@ import math
 Assumptions I am making:
 
 - Different processes/thread
-- Robot goes for closest marker (asterioid) first
+- Robot goes for closest marker (asteroid) first
 '''
 # ini
 
