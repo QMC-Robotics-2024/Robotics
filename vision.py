@@ -10,8 +10,6 @@ Assumptions I am making:
 '''
 # ini
 
-
-
 def vision_run(robot, save=False, dev=False, ):
     if not dev:
         # cv2 will allow us to adjust image info and make manipulations such as contrast if needed
