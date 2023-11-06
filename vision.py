@@ -12,7 +12,7 @@ Assumptions I am making:
 
 
 
-def vision_run(save=False, dev=False):
+def vision_run(robot, save=False, dev=False, ):
     if not dev:
         # cv2 will allow us to adjust image info and make manipulations such as contrast if needed
         frame = robot.camera.capture()
@@ -53,16 +53,3 @@ def movement_calculate(target):
     mov_angle = math.degrees(target.position.horizontal_angle())
     return [mov_angle, target.position.distance]
 
-
-if __name__ == "__main__":
-    robot = sr.robot3.Robot()
-
-    current_markers = []
-    '''
-    Values are set for testing, this script is not designed to be ran as a stand-alone
-    script and instead as a module for other scripts to call upon
-    however for simulating in we bots you will have to remove this condition
-    as robot.py is called upon by another function
-    '''
-    while True:
-        vision_run(False, True)

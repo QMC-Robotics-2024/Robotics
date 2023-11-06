@@ -26,5 +26,5 @@ while True:
     Variables:
     movement_values - [angle (in degrees), distance] to nearest marker. If no markers, this is empty
     '''
-    movement_values = vision.vision_run(False, dev)
+    movement_values = vision.vision_run(robot, False, dev)
     print(movement_values)
