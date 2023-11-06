@@ -29,6 +29,12 @@ def reverse(board, power=0.5):
     board.motors[0].power = power
     board.motors[1].power = -power
 
+def turn_clockwise(robot, power=0.5): # adapted from Jack's script
+    robot.motor_board.motors[0].power = -power
+    robot.motor_board.motors[1].power = power
+def turn_anticlockwise(robot, power=0.5):
+    robot.motor_board.motors[0].power = power
+    robot.motor_board.motors[1].power = -power
 
 def stop(board):
     board.motors[0].power = 0
