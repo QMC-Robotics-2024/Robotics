@@ -2,7 +2,7 @@ from sr.robot3 import *
 
 import vision
 import movement
-
+import time
 '''
 This script is the one the robot ultimately runs, so load all scripts needed into here
 
@@ -34,3 +34,16 @@ while True:
     movement_values = vision.vision_run(robot, False, dev)
     if movement_values: # check if not empty
         duration = movement.angle_to_duration(movement_values[0])
+        if duration != 0: # if rotation needed
+            if movement_values[0] > 0:
+                time_end = time.time() + duration
+                while time.time() < time_end:
+                    movement.turn_clockwise(robot, power)
+            else:
+                time_end = time.time() + duration
+                while time.time() < time_end:
+                    movement.turn_anticlockwise(robot, power)
+
+
+
+
