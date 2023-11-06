@@ -1,5 +1,34 @@
-# power 0.5 duration 0.65 = 90deg
+from sr.robot3 import *
+
+'''
+** Useful values **
+
+ Forward -> [negative, positive]
+ Reverse -> [positive, negative]
+ 
+ 90 deg turn -> 0.5 power 0.65 duration
+'''
+
+
+# takes angle as an input and returns power and duration
 def angle_to_duration(angle):
-    power = 0.5
-    angle *= 0.65/90
-    return angle
+    duration = angle * (0.65/90)
+    return duration
+
+
+# need to be modified once the distance-power conversion is found
+def forward(board, power=0.5):
+    board.motors[0].power = -power
+    board.motors[1].power = power
+
+
+def reverse(board, power=0.5):
+    board.motors[0].power = power
+    board.motors[1].power = -power
+
+
+def stop(board):
+    board.motors[0].power = 0
+    board.motors[1].power = 0
+
+
