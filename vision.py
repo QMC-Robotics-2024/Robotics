@@ -50,6 +50,6 @@ def markerpos(marker):
 
 
 def movement_calculate(target):
-    mov_angle = math.degrees(target.position.horizontal_angle())
+    mov_angle = math.degrees(target.position.horizontal_angle)
     return [mov_angle, target.position.distance]
 
