@@ -16,7 +16,7 @@ def angle_to_duration(angle, thresh):
         duration = 0
     else:
         duration = angle * (0.65/90)
-    return duration
+    return abs(duration)
 
 
 # need to be modified once the distance-power conversion is found
