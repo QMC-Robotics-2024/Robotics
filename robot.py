@@ -15,7 +15,7 @@ dev = True # developer mode
 power = 0.5
 
 stopping_distance = 150 #mm, distance from marker robot should stop
-
+angle_thresh = 1 # threshold for angle
 # -- boards --
 motor_board = robot.motor_board
 power_board = robot.power_board

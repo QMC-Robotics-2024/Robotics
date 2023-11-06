@@ -11,8 +11,11 @@ from sr.robot3 import *
 
 
 # takes angle as an input and returns power and duration
-def angle_to_duration(angle):
-    duration = angle * (0.65/90)
+def angle_to_duration(angle, thresh):
+    if angle <= thresh:
+        duration = 0
+    else:
+        duration = angle * (0.65/90)
     return duration
 
 
