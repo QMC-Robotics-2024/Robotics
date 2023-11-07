@@ -33,9 +33,10 @@ while True:
     Variables:
     movement_values - [angle (in degrees), distance] to nearest marker. If no markers, this is empty
     '''
-    movement_values = vision.vision_run(robot, False, dev)
+    movement_values, target_marker = vision.vision_run(robot, False, dev)
     if movement_values: # check if not empty
         duration = movement.angle_to_duration(movement_values[0], angle_thresh)
+        distance = movement_values[1]
         if duration != 0: # if rotation needed
             if movement_values[0] > 0:
                 time_end = time.time() + duration
@@ -45,6 +46,8 @@ while True:
                 time_end = time.time() + duration
                 while time.time() < time_end:
                     movement.turn_anticlockwise(robot, power)
-        movement.forward(motor_board, power)
+        while distance >= stopping_distance:
+            movement.forward(motor_board, power)
+        movement.stop()
 
 
