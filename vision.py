@@ -26,7 +26,7 @@ def vision_run(robot, save=False, dev=False, ):
     elif markers:
         target_marker = marker_sort(current_markers)
         move_values = movement_calculate(target_marker)
-        return move_values
+        return move_values, target_marker
 
 def marker_sort(current_markers):
     # sort markers by distance,
