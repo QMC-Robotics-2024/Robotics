@@ -21,13 +21,13 @@ def angle_to_duration(angle, thresh):
 
 # need to be modified once the distance-power conversion is found
 def forward(board, power=0.5):
-    board.motors[0].power = -power
+    board.motors[0].power = power
     board.motors[1].power = power
 
 
 def reverse(board, power=0.5):
     board.motors[0].power = power
-    board.motors[1].power = -power
+    board.motors[1].power = power
 
 def turn_clockwise(robot, power=0.5): # adapted from Jack's script
     robot.motor_board.motors[0].power = -power
