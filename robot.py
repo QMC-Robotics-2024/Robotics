@@ -12,7 +12,9 @@ vision.py - Controls Robots camera and marker finding ability - Author Callum R
 # -- constants --
 robot = Robot(wait_for_start=False)
 dev = True # developer mode
+
 power = 0.5
+speed = 0 # speed in mps of robot
 
 stopping_distance = 150 #mm, distance from marker robot should stop
 angle_thresh = 1 # threshold for angle
@@ -33,7 +35,7 @@ while True:
     '''
     movement_values = vision.vision_run(robot, False, dev)
     if movement_values: # check if not empty
-        duration = movement.angle_to_duration(movement_values[0])
+        duration = movement.angle_to_duration(movement_values[0], angle_thresh)
         if duration != 0: # if rotation needed
             if movement_values[0] > 0:
                 time_end = time.time() + duration
@@ -43,7 +45,6 @@ while True:
                 time_end = time.time() + duration
                 while time.time() < time_end:
                     movement.turn_anticlockwise(robot, power)
-
-
+        movement.forward(motor_board, power)
 
 
