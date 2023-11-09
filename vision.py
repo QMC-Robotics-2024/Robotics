@@ -8,6 +8,8 @@ Assumptions I am making:
 - Different processes/thread
 - Robot goes for closest marker (asteroid) first
 '''
+
+
 # ini
 
 def vision_run(robot, save=False, dev=False, ):
@@ -27,6 +29,7 @@ def vision_run(robot, save=False, dev=False, ):
         target_marker = marker_sort(current_markers)
         move_values = movement_calculate(target_marker)
         return move_values, target_marker
+
 
 def marker_sort(current_markers):
     # sort markers by distance,
@@ -51,7 +54,11 @@ def movement_calculate(target):
     mov_angle = math.degrees(target.position.horizontal_angle)
     return [mov_angle, target.position.distance]
 
-def distance_update(robot, target):
+
+def distance_update(robot, target_id):
     markers = robot.camera.see()
-    if target in markers:
-        return target.position.distance
+    for marker in markers:
+        if marker.id == target_id:
+            return marker.position.distance, marker.position.horizontal_angle
+
+
