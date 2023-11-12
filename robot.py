@@ -45,9 +45,9 @@ while True:
             if angle:
                 result = movement.rotate_check(angle, angle_thresh)
                 if result == 1:
-                    movement.turn_clockwise(robot, rotat_power)
+                    movement.turn_clockwise(motor_board, rotat_power)
                 elif result == -1:
-                    movement.turn_anticlockwise(robot, rotat_power)
+                    movement.turn_anticlockwise(motor_board, rotat_power)
                 else:
                     if distance:
                         print("Moving")
@@ -70,10 +70,10 @@ duration = movement.angle_to_duration(movement_values[0], angle_thresh)
             if movement_values[0] > 0:
                 time_end = time.time() + duration
                 while time.time() < time_end:
-                    movement.turn_clockwise(robot, rotat_power)
+                    movement.turn_clockwise(motor_board, rotat_power)
             else:
                 time_end = time.time() + duration
                 while time.time() < time_end:
-                    movement.turn_anticlockwise(robot, rotat_power)
+                    movement.turn_anticlockwise(motor_board, rotat_power)
 
 """
