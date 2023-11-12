@@ -32,38 +32,38 @@ def rotate_check(angle, thresh):
 
 # Movement subroutines
 # In this implementation, motor powers are pre-flipped to account for mounting arrangement so just stick a "-" infront to reverse direction
-def forward(robot, motor_power):
+def forward(board, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 
-    robot.motor_board.motors[0].power = motor_power_right
-    robot.motor_board.motors[1].power = motor_power_left
+    board.motors[0].power = motor_power_right
+    board.motors[1].power = motor_power_left
 
-def reverse(robot, motor_power):
+def reverse(board, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 
-    robot.motor_board.motors[0].power = -motor_power_right
-    robot.motor_board.motors[1].power = -motor_power_left
+    board.motors[0].power = -motor_power_right
+    board.motors[1].power = -motor_power_left
 
-def turn_clockwise(robot, motor_power):
+def turn_clockwise(board, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 
     # Turns clockwise by running the left motor forward and the right motor backward
-    robot.motor_board.motors[0].power = -motor_power_right
-    robot.motor_board.motors[1].power = motor_power_left
+    board.motors[0].power = -motor_power_right
+    board.motors[1].power = motor_power_left
 
-def turn_anticlockwise(robot, motor_power):
+def turn_anticlockwise(board, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 
     # Turns clockwise by running the left motor backward and the right motor forward
-    robot.motor_board.motors[0].power = motor_power_right
-    robot.motor_board.motors[1].power = -motor_power_left
+    board.motors[0].power = motor_power_right
+    board.motors[1].power = -motor_power_left
 
-def stop_motors(robot):
+def stop_motors(board):
     # Stops motors
     # BRAKE is equivilant to setting power to 0
-    robot.motor_board.motors[0].power = BRAKE
-    robot.motor_board.motors[1].power = BRAKE
+    board.motors[0].power = BRAKE
+    board.motors[1].power = BRAKE
