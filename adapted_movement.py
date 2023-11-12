@@ -32,21 +32,21 @@ def rotate_check(angle, thresh):
 
 # Movement subroutines
 # In this implementation, motor powers are pre-flipped to account for mounting arrangement so just stick a "-" infront to reverse direction
-def forward(motor_power):
+def forward(robot, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 
     robot.motor_board.motors[0].power = motor_power_right
     robot.motor_board.motors[1].power = motor_power_left
 
-def reverse(motor_power):
+def reverse(robot, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 
     robot.motor_board.motors[0].power = -motor_power_right
     robot.motor_board.motors[1].power = -motor_power_left
 
-def turn_clockwise(motor_power):
+def turn_clockwise(robot, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 
@@ -54,7 +54,7 @@ def turn_clockwise(motor_power):
     robot.motor_board.motors[0].power = -motor_power_right
     robot.motor_board.motors[1].power = motor_power_left
 
-def turn_anticlockwise(motor_power):
+def turn_anticlockwise(robot, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 
@@ -62,7 +62,7 @@ def turn_anticlockwise(motor_power):
     robot.motor_board.motors[0].power = motor_power_right
     robot.motor_board.motors[1].power = -motor_power_left
 
-def stop_motors():
+def stop_motors(robot):
     # Stops motors
     # BRAKE is equivilant to setting power to 0
     robot.motor_board.motors[0].power = BRAKE
