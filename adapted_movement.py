@@ -66,5 +66,5 @@ def turn_anticlockwise(board, motor_power):
 def stop_motors(board):
     # Stops motors
     # BRAKE is equivilant to setting power to 0
-    board.motors[0].power = BRAKE
-    board.motors[1].power = BRAKE
+    board.motors[0].power = 0
+    board.motors[1].power = 0
