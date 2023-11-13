@@ -2,7 +2,7 @@
 from sr.robot3 import *
 
 import vision
-import movement
+import adapted_movement as motion
 import time
 print("Script Running")
 '''
@@ -11,7 +11,7 @@ This script is the one the robot ultimately runs, so load all scripts needed int
 vision.py - Controls Robots camera and marker finding ability - Author Callum R
 
 '''
-# -- constants --
+#----------Constants----------#
 robot = Robot()
 dev = True # developer mode
 
@@ -23,7 +23,8 @@ stopping_distance = 150 #mm, distance from marker robot should stop
 
 scanning_increments = 45 # degrees, if it sees no asterioids, spin this angle and search again
 angle_thresh = 2.5# threshold for angle
-# -- boards --
+
+#----------Board Setup----------#
 motor_board = robot.motor_board
 power_board = robot.power_board
 robot.power_board.outputs[OUT_H0].is_enabled = True
@@ -44,22 +45,22 @@ while True:
         while True:
             distance, angle = vision.distance_update(robot, id)
             if angle:
-                result = movement.rotate_check(angle, angle_thresh)
+                result = motion.rotate_check(angle, angle_thresh)
                 if result == 1:
-                    movement.turn_clockwise(motor_board, rotat_power)
+                    motion.turn_clockwise(motor_board, rotat_power)
                 elif result == -1:
-                    movement.turn_anticlockwise(motor_board, rotat_power)
+                    motion.turn_anticlockwise(motor_board, rotat_power)
                 else:
                     if distance:
                         print("Moving")
                         if distance <= stopping_distance:
-                            movement.stop(motor_board)
+                            motion.stop(motor_board)
                             # switch to ultrasonic sensor
                             break
                         else:
-                            movement.forward(motor_board, power)
+                            motion.forward(motor_board, power)
                     else:
-                        movement.stop(motor_board)
+                        motion.stop(motor_board)
 
 
 
