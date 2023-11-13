@@ -15,13 +15,13 @@ robot = Robot()
 dev = True # developer mode
 
 power = 0.5
-rotat_power = 0.3
+rotat_power = 0.1
 speed = 0 # speed in mps of robot
 
 stopping_distance = 150 #mm, distance from marker robot should stop
 
 scanning_increments = 45 # degrees, if it sees no asterioids, spin this angle and search again
-angle_thresh = 2.5# threshold for angle
+angle_thresh = 0.05# threshold for angle
 # -- boards --
 motor_board = robot.motor_board
 power_board = robot.power_board
@@ -41,15 +41,22 @@ while True:
     id = target_marker.id
     if movement_values: # check if not empty
         while True:
-            distance, angle = vision.distance_update(robot, id)
+            try:
+                distance, angle = vision.distance_update(robot, id)
+            except:
+                distance = 0
+                angle = 0
             if angle:
                 result = movement.rotate_check(angle, angle_thresh)
                 if result == 1:
-                    movement.turn_clockwise(motor_board, rotat_power)
+                    print("Rotate")
+                    movement.turn_clockwise(robot, rotat_power)
                 elif result == -1:
-                    movement.turn_anticlockwise(motor_board, rotat_power)
+                    movement.turn_anticlockwise(robot, rotat_power)
+                    print("Rotate")
                 else:
                     if distance:
+                        print(angle, distance)
                         print("Moving")
                         if distance <= stopping_distance:
                             movement.stop(motor_board)
@@ -57,9 +64,12 @@ while True:
                             break
                         else:
                             movement.forward(motor_board, power)
+                    elif distance <= stopping_distance:
+                        movement.stop(motor_board)
                     else:
                         movement.stop(motor_board)
-
+            else:
+                movement.stop(motor_board)
 
 
 """
