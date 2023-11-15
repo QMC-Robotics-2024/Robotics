@@ -36,38 +36,36 @@ while True:
     Variables:
     movement_values - [angle (in degrees), distance] to nearest marker. If no markers, this is empty
     '''
-    print("Looping..")
+    # get inital values
     movement_values, target_marker = vision.vision_run(robot, False, dev)
     id = target_marker.id
     if movement_values: # check if not empty
         while True:
             try:
+                # try finding the distance, if it cant see it, set distance and angle to 0
                 distance, angle = vision.distance_update(robot, id)
             except:
+                # this stops it if it cant find any asteroids, so it can search without blur
                 distance = 0
                 angle = 0
-            if angle:
-                result = movement.rotate_check(angle, angle_thresh)
-                if result == 1:
+            if angle: # if there is any value for angle
+                result = movement.rotate_check(angle, angle_thresh) # checks if the angle is above/below threshold
+                if result == 1: # object is to the right of robot
                     print("Rotate")
                     movement.turn_clockwise(robot, rotat_power)
-                elif result == -1:
+                elif result == -1: # object is to the left of robot
                     movement.turn_anticlockwise(robot, rotat_power)
                     print("Rotate")
                 else:
-                    if distance:
-                        print(angle, distance)
-                        print("Moving")
-                        if distance <= stopping_distance:
-                            movement.stop(motor_board)
-                            # switch to ultrasonic sensor
-                            break
-                        else:
-                            movement.forward(motor_board, power)
-                    elif distance <= stopping_distance:
-                        movement.stop(motor_board)
-                    else:
-                        movement.stop(motor_board)
+                    movement.stop(motor_board) # doesnt need to rotate
+
+            if distance: # not an elsif so it wont be skipped
+                if distance <= stopping_distance:
+                    movement.stop(motor_board)
+                    # switch to ultrasonic sensor
+                    break
+                else:
+                    movement.forward(motor_board, power)
             else:
                 movement.stop(motor_board)
 

@@ -11,7 +11,7 @@ Assumptions I am making:
 
 
 # ini
-
+# this function runs first to initally find an asteroid, and returns the closest asteroid
 def vision_run(robot, save=False, dev=False):
     if not dev:
         # cv2 will allow us to adjust image info and make manipulations such as contrast if needed
@@ -51,11 +51,13 @@ def markerpos(marker):
 
 
 def movement_calculate(target):
+    # converts radians to degrees
     mov_angle = math.degrees(target.position.horizontal_angle)
     return [mov_angle, target.position.distance]
 
 
 def distance_update(robot, target_id):
+    # runs every iteration to update the distance and angle by target ID
     markers = robot.camera.see()
     for marker in markers:
         if marker.id == target_id:
