@@ -2,6 +2,7 @@ from sr.robot3 import *
 
 import vision
 import movement
+import adapted_movement as motion
 import time
 print("Script Running")
 '''
@@ -49,25 +50,25 @@ while True:
                 distance = 0
                 angle = 0
             if angle: # if there is any value for angle
-                result = movement.rotate_check(angle, angle_thresh) # checks if the angle is above/below threshold
+                result = motion.rotate_check(angle, angle_thresh) # checks if the angle is above/below threshold
                 if result == 1: # object is to the right of robot
                     print("Rotate")
-                    movement.turn_clockwise(robot, rotat_power)
+                    motion.turn_clockwise(robot, rotat_power)
                 elif result == -1: # object is to the left of robot
-                    movement.turn_anticlockwise(robot, rotat_power)
+                    motion.turn_anticlockwise(robot, rotat_power)
                     print("Rotate")
                 else:
-                    movement.stop(motor_board) # doesnt need to rotate
+                    motion.stop_motors(motor_board) # doesnt need to rotate
 
             if distance: # not an elsif so it wont be skipped
                 if distance <= stopping_distance:
-                    movement.stop(motor_board)
+                    motion.stop_motors(motor_board)
                     # switch to ultrasonic sensor
                     break
                 else:
-                    movement.forward(motor_board, power)
+                    motion.forward(motor_board, power)
             else:
-                movement.stop(motor_board)
+                motion.stop_motors(motor_board)
 
 
 """
