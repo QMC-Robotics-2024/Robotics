@@ -33,6 +33,7 @@ def rotate_check(angle, thresh):
 
 # Movement subroutines
 # In this implementation, motor powers are pre-flipped to account for mounting arrangement so just stick a "-" infront to reverse direction
+# (sets to forward, will un'eff later)
 def reverse(board, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
