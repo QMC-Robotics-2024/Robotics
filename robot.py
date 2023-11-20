@@ -23,6 +23,9 @@ stopping_distance = 150 #mm, distance from marker robot should stop
 
 scanning_increments = 45 # degrees, if it sees no asterioids, spin this angle and search again
 angle_thresh = 0.05# threshold for angle
+
+exposure_values = [x for x in range(-13, 0)] # camera settings
+
 # -- boards --
 motor_board = robot.motor_board
 power_board = robot.power_board
