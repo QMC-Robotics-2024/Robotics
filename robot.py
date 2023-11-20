@@ -16,7 +16,7 @@ robot = Robot()
 dev = True # developer mode
 
 power = 0.5
-rotat_power = 0.1
+rotation_power = 0.1
 speed = 0 # speed in mps of robot
 
 stopping_distance = 150 #mm, distance from marker robot should stop
@@ -48,19 +48,27 @@ while True:
             try:
                 # try finding the distance, if it cant see it, set distance and angle to 0
                 distance, angle = vision.distance_update(robot, id)
+
             except:
                 # this stops it if it cant find any asteroids, so it can search without blur
                 distance = 0
                 angle = 0
+
             if angle: # if there is any value for angle
                 result = motion.rotate_check(angle, angle_thresh) # checks if the angle is above/below threshold
+
                 if result == 1: # object is to the right of robot
+                    # Rotates clockwise to try and face object
+                    motion.turn_clockwise(robot, rotation_power)
                     print("Rotate")
-                    motion.turn_clockwise(robot, rotat_power)
+
                 elif result == -1: # object is to the left of robot
-                    motion.turn_anticlockwise(robot, rotat_power)
+                    # Rotates anticlockwise to try and face object
+                    motion.turn_anticlockwise(robot, rotation_power)
                     print("Rotate")
+
                 else:
+                    # Stop motors
                     motion.stop_motors(motor_board) # doesnt need to rotate
 
             if distance: # not an elsif so it wont be skipped
@@ -68,9 +76,13 @@ while True:
                     motion.stop_motors(motor_board)
                     # switch to ultrasonic sensor
                     break
+
                 else:
+                    # Has robot move forward
                     motion.forward(motor_board, power)
+                    
             else:
+                # Stop moving
                 motion.stop_motors(motor_board)
 
 
@@ -83,10 +95,10 @@ duration = movement.angle_to_duration(movement_values[0], angle_thresh)
             if movement_values[0] > 0:
                 time_end = time.time() + duration
                 while time.time() < time_end:
-                    movement.turn_clockwise(motor_board, rotat_power)
+                    movement.turn_clockwise(motor_board, rotation_power)
             else:
                 time_end = time.time() + duration
                 while time.time() < time_end:
-                    movement.turn_anticlockwise(motor_board, rotat_power)
+                    movement.turn_anticlockwise(motor_board, rotation_power)
 
 """
