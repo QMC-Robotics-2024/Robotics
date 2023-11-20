@@ -48,12 +48,10 @@ while True:
             try:
                 # try finding the distance, if it cant see it, set distance and angle to 0
                 distance, angle = vision.distance_update(robot, id)
-
             except:
                 # this stops it if it cant find any asteroids, so it can search without blur
                 distance = 0
                 angle = 0
-
             if angle: # if there is any value for angle
                 result = motion.rotate_check(angle, angle_thresh) # checks if the angle is above/below threshold
 
@@ -61,26 +59,21 @@ while True:
                     # Rotates clockwise to try and face object
                     motion.turn_clockwise(robot, rotation_power)
                     print("Rotate")
-
                 elif result == -1: # object is to the left of robot
                     # Rotates anticlockwise to try and face object
                     motion.turn_anticlockwise(robot, rotation_power)
                     print("Rotate")
-
                 else:
                     # Stop motors
                     motion.stop_motors(motor_board) # doesnt need to rotate
-
             if distance: # not an elsif so it wont be skipped
                 if distance <= stopping_distance:
                     motion.stop_motors(motor_board)
                     # switch to ultrasonic sensor
                     break
-
                 else:
                     # Has robot move forward
-                    motion.forward(motor_board, power)
-                    
+                    motion.forward(motor_board, power)        
             else:
                 # Stop moving
                 motion.stop_motors(motor_board)
