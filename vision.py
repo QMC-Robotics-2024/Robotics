@@ -43,6 +43,7 @@ def marker_sort(current_markers):
 
 
 def markerpos(marker):
+    # Spits out various info in relatiuon to visible markers
     '''
     :param marker: sr.robot3 marker
     :return: [ho, vo, distance]
