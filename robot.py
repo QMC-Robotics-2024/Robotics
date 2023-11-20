@@ -1,7 +1,7 @@
 from sr.robot3 import *
 
 import vision
-#import movement #obselete as movesd to new movement system
+#import movement #obselete as moved to new movement system
 import adapted_movement as motion
 import time
 print("Script Running")
