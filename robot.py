@@ -1,8 +1,7 @@
 from sr.robot3 import *
 
 import vision
-import movement
-import adapted_movement as motion
+import movement as motion
 import time
 print("Script Running")
 '''
@@ -16,7 +15,7 @@ robot = Robot()
 dev = True # developer mode
 
 power = 0.5
-rotat_power = 0.1
+rotat_power = 0.2
 speed = 0 # speed in mps of robot
 
 stopping_distance = 150 #mm, distance from marker robot should stop
@@ -34,7 +33,6 @@ robot.power_board.outputs[OUT_H0].is_enabled = True
 # -- vision prereq --
 current_markers = [] # what markers the robot can currently see
 # -- main run loop --
-
 while True:
     '''
     Variables:
@@ -61,17 +59,17 @@ while True:
                     motion.turn_anticlockwise(robot, rotat_power)
                     print("Rotate")
                 else:
-                    motion.stop_motors(motor_board) # doesnt need to rotate
+                    motion.stop(motor_board) # doesnt need to rotate
 
             if distance: # not an elsif so it wont be skipped
                 if distance <= stopping_distance:
-                    motion.stop_motors(motor_board)
+                    motion.stop(motor_board)
                     # switch to ultrasonic sensor
                     break
                 else:
                     motion.forward(motor_board, power)
             else:
-                motion.stop_motors(motor_board)
+                motion.stop(motor_board)
 
 
 """
