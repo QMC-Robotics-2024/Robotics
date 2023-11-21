@@ -1,8 +1,8 @@
 from sr.robot3 import *
 
-import vision
-import movement as motion
-import time
+from Modules import vision
+from Modules import movement as motion
+
 print("Script Running")
 '''
 This script is the one the robot ultimately runs, so load all scripts needed into here
@@ -18,7 +18,7 @@ power = 0.5
 rotat_power = 0.2
 speed = 0 # speed in mps of robot
 
-stopping_distance = 150 #mm, distance from marker robot should stop
+stopping_distance = 500 #mm, distance from marker robot should stop
 
 scanning_increments = 45 # degrees, if it sees no asterioids, spin this angle and search again
 angle_thresh = 0.05# threshold for angle
