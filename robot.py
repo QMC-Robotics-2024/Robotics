@@ -2,6 +2,7 @@ from sr.robot3 import *
 
 from Modules import vision
 from Modules import movement as motion
+from Modules import behaviour
 
 print("Script Running")
 '''
@@ -50,26 +51,8 @@ while True:
                 # this stops it if it cant find any asteroids, so it can search without blur
                 distance = 0
                 angle = 0
-            if angle: # if there is any value for angle
-                result = motion.rotate_check(angle, angle_thresh) # checks if the angle is above/below threshold
-                if result == 1: # object is to the right of robot
-                    print("Rotate")
-                    motion.turn_clockwise(robot, rotat_power)
-                elif result == -1: # object is to the left of robot
-                    motion.turn_anticlockwise(robot, rotat_power)
-                    print("Rotate")
-                else:
-                    motion.stop(motor_board) # doesnt need to rotate
-
-            if distance: # not an elsif so it wont be skipped
-                if distance <= stopping_distance:
-                    motion.stop(motor_board)
-                    # switch to ultrasonic sensor
-                    break
-                else:
-                    motion.forward(motor_board, power)
-            else:
-                motion.stop(motor_board)
+            behaviour.turn_to_marker(motor_board, rotat_power, angle, distance)
+            behaviour.drive_to_marker(motor_board, power, distance, stopping_distance)
 
 
 """
