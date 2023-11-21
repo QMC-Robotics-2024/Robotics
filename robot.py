@@ -21,10 +21,14 @@ speed = 0 # speed in mps of robot
 
 stopping_distance = 500 #mm, distance from marker robot should stop
 
-scanning_increments = 45 # degrees, if it sees no asterioids, spin this angle and search again
+
 angle_thresh = 0.05# threshold for angle
 
 exposure_values = [x for x in range(-13, 0)] # camera settings
+
+scan_duration = 1 # how long it turns for when scanning
+check_duration = 2 # how long it checks for
+rotate_incremen_speed = 0.5
 
 # -- boards --
 motor_board = robot.motor_board
@@ -40,18 +44,31 @@ while True:
     movement_values - [angle (in degrees), distance] to nearest marker. If no markers, this is empty
     '''
     # get inital values
-    movement_values, target_marker = vision.vision_run(robot, False, dev)
+    movement_values, target_marker, current_markers = vision.vision_run(robot, False, dev)
     id = target_marker.id
     if movement_values: # check if not empty
         while True:
+            distance = 0
+            angle = 0
             try:
                 # try finding the distance, if it cant see it, set distance and angle to 0
                 distance, angle = vision.distance_update(robot, id)
             except:
                 # this stops it if it cant find any asteroids, so it can search without blur
-                distance = 0
-                angle = 0
-            behaviour.turn_to_marker(motor_board, rotat_power, angle, distance)
+                pass
+            if not distance and not angle:
+                robot.sleep(check_duration)
+                try:
+                    distance, angle = vision.distance_update(robot, id)
+                except:
+                    # it can no longer find the marker, so update it
+                    movement_values, target_marker, current_markers = vision.vision_run(robot, False, dev)
+                    while not current_markers:
+                        current_markers = behaviour.scan_for_markers(robot, rotate_incremen_speed, scan_duration, check_duration)
+                    movement_values, target_marker, current_markers = vision.vision_run(robot, False, dev)
+                    id = target_marker.id
+                    distance, angle = vision.distance_update(robot, id)
+            behaviour.turn_to_marker(motor_board, rotat_power, angle, angle_thresh)
             behaviour.drive_to_marker(motor_board, power, distance, stopping_distance)
 
 

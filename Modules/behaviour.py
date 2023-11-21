@@ -27,9 +27,11 @@ def scan_for_markers(robot, rotate_power, scan_duration, check_duration):
         scan_time = time.time() + scan_duration
         while time.time() < scan_time:
             motion.turn_clockwise(robot, rotate_power)
+        motion.stop(robot.motor_board)
         check_time = time.time() + check_duration
         while time.time() < check_time:
             current_markers = robot.camera.see()
+    return  current_markers
 
 def turn_to_marker(motor_board, rotate_power, angle, angle_thresh):
     if angle:  # if there is any value for angle
