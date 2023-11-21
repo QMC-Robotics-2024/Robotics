@@ -33,21 +33,22 @@ def rotate_check(angle, thresh):
 
 # Movement subroutines
 # In this implementation, motor powers are pre-flipped to account for mounting arrangement so just stick a "-" infront to reverse direction
-def forward(board, motor_power):
+# (sets to forward, will un'eff later)
+def reverse(board, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 
     board.motors[0].power = motor_power_right
     board.motors[1].power = motor_power_left
 
-def reverse(board, motor_power):
+def forward(board, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 
     board.motors[0].power = -motor_power_right
     board.motors[1].power = -motor_power_left
 
-def turn_clockwise(board, motor_power):
+def turn_anticlockwise(board, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 
@@ -55,7 +56,7 @@ def turn_clockwise(board, motor_power):
     board.motors[0].power = -motor_power_right
     board.motors[1].power = motor_power_left
 
-def turn_anticlockwise(board, motor_power):
+def turn_clockwise(board, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 

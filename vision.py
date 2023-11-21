@@ -43,6 +43,7 @@ def marker_sort(current_markers):
 
 
 def markerpos(marker):
+    # Spits out various info in relatiuon to visible markers
     '''
     :param marker: sr.robot3 marker
     :return: [ho, vo, distance]
@@ -51,6 +52,7 @@ def markerpos(marker):
 
 
 def movement_calculate(target):
+    ### Could be made redundant if a flux-gate magnetometer is installed to the robot to attain measures of rotation
     # converts radians to degrees
     mov_angle = math.degrees(target.position.horizontal_angle)
     return [mov_angle, target.position.distance]
@@ -63,4 +65,4 @@ def distance_update(robot, target_id):
         if marker.id == target_id:
             return marker.position.distance, marker.position.horizontal_angle
 
-
+''' Please comment this it is almost unreadable'''
