@@ -7,10 +7,11 @@ def dynamic_exposure_test():
     exposure_values = [x for x in range(-13, 0)] # camera exposure range
 
     robot = Robot()
-    cap = cv.VideoCapture(0) # set camera
+    cap = cv.VideoCapture(-1) # set camera
     for value in exposure_values: # for every camera exposure setting
         cap.set(cv.CAP_PROP_EXPOSURE, value) # set this exposure
-        res, frame = cap.read() # read the frame (comes with res seperate)
+        res, frame = cap.read()
+        print(frame)# read the frame (comes with res seperate)
         markers = robot.camera.see(frame) # find markers
         if markers: # if it can see
             target_marker = markers[0]
@@ -42,4 +43,8 @@ def set_dynamic_exposure(cap, exposure_values, robot, offset=1):
         else:
             pass # it cant see it
     working_values.sort()
-    return (working_values[0] + offset)
+    exposure_value = working_values[0] + offset
+    cap.set(cv.CAP_PROP_EXPOSURE, exposure_value)
+    return exposure_value
+
+dynamic_exposure_test()
