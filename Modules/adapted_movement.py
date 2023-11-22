@@ -64,7 +64,7 @@ def turn_clockwise(board, motor_power):
     board.motors[0].power = motor_power_right
     board.motors[1].power = -motor_power_left
 
-def stop_motors(board):
+def stop(board):
     # Stops motors
     # BRAKE is equivilant to setting power to 0
     board.motors[0].power = 0
