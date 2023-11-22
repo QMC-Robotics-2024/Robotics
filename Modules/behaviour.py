@@ -5,11 +5,12 @@ basically all the algorithims and how the robot thinks
 
 Callum Out
 '''
-import movement as motion
-import vision
 
 import time
 
+def set_motion(parse):
+    global motion
+    motion = parse
 def scan_for_markers(robot, rotate_power, scan_duration, check_duration):
     """
     :param robot:
@@ -25,27 +26,36 @@ def scan_for_markers(robot, rotate_power, scan_duration, check_duration):
     current_markers = []
     while not current_markers:
         scan_time = time.time() + scan_duration
+        print("Search Scan")
         while time.time() < scan_time:
-            motion.turn_clockwise(robot, rotate_power)
+            motion.turn_clockwise(robot.motor_board, rotate_power)
         motion.stop(robot.motor_board)
         check_time = time.time() + check_duration
+        print("Waiting...")
         while time.time() < check_time:
             current_markers = robot.camera.see()
-    return  current_markers
+            if current_markers:
+                break
+    return current_markers
 
 def turn_to_marker(motor_board, rotate_power, angle, angle_thresh):
+
     if angle:  # if there is any value for angle
         result = motion.rotate_check(angle, angle_thresh)  # checks if the angle is above/below threshold
         if result == 1:  # object is to the right of robot
             motion.turn_clockwise(motor_board, rotate_power)
+            print("Turning CLockwise")
         elif result == -1:  # object is to the left of robot
             motion.turn_anticlockwise(motor_board, rotate_power)
+            print("Turning Anticlockwise")
         else:
             motion.stop(motor_board)  # doesnt need to rotate
 def drive_to_marker(motor_board,power,distance, min):
     # moves forward to marker
     if distance:
+        print("Distance Still")
         if distance <= min:
+            print("STOP")
             motion.stop(motor_board)
         else:
             motion.forward(motor_board, power)
