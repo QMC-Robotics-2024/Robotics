@@ -17,14 +17,11 @@ dev = True # developer mode
 
 power = 0.5
 rotat_power = 0.5
-speed = 0 # speed in mps of robot
 
 stopping_distance = 300 #mm, distance from marker robot should stop
 
 
 angle_thresh = 0.01# threshold for angle
-
-exposure_values = [x for x in range(-13, 0)] # camera settings
 
 scan_duration = 0.5 # how long it turns for when scanning
 check_duration = 0.4 # how long it checks for
