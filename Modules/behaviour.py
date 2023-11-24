@@ -66,3 +66,19 @@ def drive_to_marker(motor_board, power, distance, min):
             motion.forward(motor_board, power)
     else:
         motion.stop(motor_board)
+
+def ultrasonic_drive(motor_board, power, arudino, sensor_min):
+    """
+    This drives the robot at a slower speed using distance from the serial output
+    of the arduino, until the distance is at a certain value
+    :param motor_board:
+    :param power:
+    :param arudino:
+    :param sensor_min:
+    :return:
+    """
+    distance = arudino.command('s')
+    motion.forward(motor_board, power)
+    while distance > sensor_min:
+        distance = arudino.command("s")
+    motion.stop(motor_board)
