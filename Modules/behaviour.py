@@ -1,16 +1,19 @@
-'''
+"""
 In the beginning there was nothing, then there was "behaviour.py"
 This script is populated with functions that control the behaviour of our robot
 basically all the algorithims and how the robot thinks
 
 Callum Out
-'''
+"""
 
 import time
+
 
 def set_motion(parse):
     global motion
     motion = parse
+
+
 def scan_for_markers(robot, rotate_power, scan_duration, check_duration):
     """
     :param robot:
@@ -38,19 +41,21 @@ def scan_for_markers(robot, rotate_power, scan_duration, check_duration):
                 break
     return current_markers
 
-def turn_to_marker(motor_board, rotate_power, angle, angle_thresh):
 
+def turn_to_marker(motor_board, rotate_power, angle, angle_thresh):
     if angle:  # if there is any value for angle
         result = motion.rotate_check(angle, angle_thresh)  # checks if the angle is above/below threshold
         if result == 1:  # object is to the right of robot
             motion.turn_clockwise(motor_board, rotate_power)
-            print("Turning CLockwise")
+            print("Turning Clockwise")
         elif result == -1:  # object is to the left of robot
             motion.turn_anticlockwise(motor_board, rotate_power)
             print("Turning Anticlockwise")
         else:
             motion.stop(motor_board)  # doesnt need to rotate
-def drive_to_marker(motor_board,power,distance, min):
+
+
+def drive_to_marker(motor_board, power, distance, min):
     # moves forward to marker
     if distance:
         print("Distance Still")
@@ -61,4 +66,3 @@ def drive_to_marker(motor_board,power,distance, min):
             motion.forward(motor_board, power)
     else:
         motion.stop(motor_board)
-
