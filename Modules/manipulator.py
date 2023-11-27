@@ -27,6 +27,7 @@ def raise_arm():
 def lower_arm():
     '''
     Lowers arm (until box is on surface?)
+    this will use the servo controler board
     '''
     pass
 
