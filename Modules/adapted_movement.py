@@ -1,4 +1,9 @@
-'''If you have issues with this dm @hackercat77 or tag me on the discord. Odds are something stupid is eff'ed and I need to fix it'''
+'''
+
+If you have issues with this dm @hackercat77 or tag me on the discord. Odds are something stupid is eff'ed and I need to fix it
+
+Author: JP
+'''
 # Import student robotics library
 from sr.robot3 import *
 
