@@ -4,6 +4,8 @@ Program controls suction and raising and lowerting of the mechanism
 
 If you have issues with this dm @hackercat77 or tag me on the discord. Odds are something stupid is eff'ed and I need to fix it
 
+Currently waiting for the build team to get their sh*t together so i can finish writing this
+
 Author: JP
 
 '''
