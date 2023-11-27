@@ -21,7 +21,7 @@ def calculate_powers(motor_power):
 
 # Takes angle as an input and returns power and duration
 # This might be eff'ed
-### The main program doesn't access thisn in any of the movement scripts, might be why it over steers
+### The main program doesn't access this in any of the movement scripts, might be why it over steers
 def angle_to_duration(angle, thresh):
     if angle <= thresh:
         duration = 0
