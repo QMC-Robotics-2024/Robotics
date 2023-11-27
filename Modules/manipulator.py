@@ -6,17 +6,28 @@ Program to control the mechanism used for manipulating boxes (Asteroids/Egg)
 from sr.robot3 import *
 
 #----------Subroutines----------#
-def suction_on():
+def suction_on(board, suck_power):
     # Turns on suction
+    board.motors[2].power = suck_power
     pass
 
-def suction_off():
+def suction_off(board):
+    # Turns off suction
+    board.motors[2].power = 0
     pass
 
 def raise_arm():
+    # Raises manipulator mechanism (arm was shorter to type)
+    '''
+    this will use the servo controler board to raise the arm by a certain factor that will be determined by how high the box needsto be raised
+    e.g. to raise high enough to place box in a "spaceship"
+    '''
     pass
 
 def lower_arm():
+    '''
+    Lowers arm (until box is on surface?)
+    '''
     pass
 
     
