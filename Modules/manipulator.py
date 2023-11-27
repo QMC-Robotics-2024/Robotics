@@ -1,5 +1,9 @@
 '''
 Program to control the mechanism used for manipulating boxes (Asteroids/Egg)
+Program controls suction and raising and lowerting of the mechanism
+
+Author: JP
+
 '''
 #----------Imports----------#
 # Import student robotics library
