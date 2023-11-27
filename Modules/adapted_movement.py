@@ -1,5 +1,4 @@
 '''
-
 If you have issues with this dm @hackercat77 or tag me on the discord. Odds are something stupid is eff'ed and I need to fix it
 
 Author: JP
