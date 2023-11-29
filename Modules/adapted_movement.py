@@ -59,16 +59,16 @@ def turn_anticlockwise(board, motor_power):
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 
     # Turns clockwise by running the left motor forward and the right motor backward
-    board.motors[0].power = -motor_power_right
-    board.motors[1].power = motor_power_left
+    board.motors[0].power = motor_power_right
+    board.motors[1].power = -motor_power_left
 
 def turn_clockwise(board, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 
     # Turns clockwise by running the left motor backward and the right motor forward
-    board.motors[0].power = motor_power_right
-    board.motors[1].power = -motor_power_left
+    board.motors[0].power = -motor_power_right
+    board.motors[1].power = motor_power_left
 
 def stop(board):
     # Stops motors
