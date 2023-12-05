@@ -1,7 +1,7 @@
 from sr.robot3 import *
 
 from Modules import vision
-from Modules import adapted_movement as motion
+from Modules import movement as motion
 from Modules import behaviour
 print("Script Running")
 '''
@@ -13,10 +13,10 @@ vision.py - Controls Robots camera and marker finding ability - Author Callum R
 # -- constants --
 dev = True  # developer mode
 
-power = 0.5
-rotat_power = 0.5
+power = 0.7
+rotat_power = 0.7
 
-stopping_distance = 400  # mm, distance from marker robot should stop
+stopping_distance = 800  # mm, distance from marker robot should stop and switch to ultrasonic
 
 angle_thresh = 0.01  # threshold for angle
 
@@ -24,10 +24,9 @@ scan_duration = 0.5  # how long it turns for when scanning
 check_duration = 0.4  # how long it checks for
 rotate_increment_speed = 0.3
 
-arduino_speed = 0.3
-arduino_min = 200 # distance in mm arduino stops robot
+arduino_speed = 0.2
+arduino_min = 400 # distance in mm arduino stops robot
 # -- boards --
-# replace with our boards number
 robot = Robot()
 motor_board = robot.motor_board
 power_board = robot.power_board
@@ -38,7 +37,7 @@ arduino = robot.arduino # using extended SR firmware (no reason really tbh)
 # -- vision prereq --
 current_markers = []  # what markers the robot can currently see
 # -- main run loop --
-behaviour.set_motion(motion)
+behaviour.set_motion(motion) # parse the motion script to behaviour
 while True:
     '''
     Variables:
@@ -76,6 +75,8 @@ while True:
                         distance, angle = vision.distance_update(robot, target_marker.id)
                     except TypeError:
                         print("Beginning Scan")
+                        power = 0.5
+                        rotat_power = 0.7
                         current_markers = False
                         while not current_markers:
                             print("Scanning")
@@ -86,15 +87,19 @@ while True:
                         distance, angle = vision.distance_update(robot, id)
                         print("Found Values")
             if distance > stopping_distance:
+                power = behaviour.dynamic_speed(distance)
+                rotat_power = power + 0.2
                 behaviour.turn_to_marker(motor_board, rotat_power, angle, angle_thresh)
                 behaviour.drive_to_marker(motor_board, power, distance, stopping_distance)
             elif distance == stopping_distance or distance < stopping_distance:
                 print("[ARDUINO ACTIVE]")
-                behaviour.ultrasonic_drive(motor_board, arduino_speed, arduino, arduino_min)
+                behaviour.ultrasonic_drive(motor_board, arduino_speed, arduino, arduino_min, distance)
+                motion.stop(motor_board)
             else:
                 motion.stop(motor_board)
     elif not movement_values:
         while not current_markers:
+            print("None Seen")
             current_markers = behaviour.scan_for_markers(robot, rotate_increment_speed, scan_duration, check_duration)
 
 """
