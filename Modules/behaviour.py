@@ -47,10 +47,8 @@ def turn_to_marker(motor_board, rotate_power, angle, angle_thresh):
         result = motion.rotate_check(angle, angle_thresh)  # checks if the angle is above/below threshold
         if result == 1:  # object is to the right of robot
             motion.turn_clockwise(motor_board, rotate_power)
-            print("Turning Clockwise")
         elif result == -1:  # object is to the left of robot
             motion.turn_anticlockwise(motor_board, rotate_power)
-            print("Turning Anticlockwise")
         else:
             motion.stop(motor_board)  # doesnt need to rotate
 
@@ -58,7 +56,6 @@ def turn_to_marker(motor_board, rotate_power, angle, angle_thresh):
 def drive_to_marker(motor_board, power, distance, min):
     # moves forward to marker
     if distance:
-        print("Distance Still")
         if distance <= min:
             print("STOP")
             motion.stop(motor_board)
@@ -67,7 +64,7 @@ def drive_to_marker(motor_board, power, distance, min):
     else:
         motion.stop(motor_board)
 
-def ultrasonic_drive(motor_board, power, arudino, sensor_min):
+def ultrasonic_drive(motor_board, power, arudino, sensor_min,distance):
     """
     This drives the robot at a slower speed using distance from the serial output
     of the arduino, until the distance is at a certain value
@@ -77,8 +74,27 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min):
     :param sensor_min:
     :return:
     """
-    distance = arudino.command('s')
+    steps = 200
+    distance = int(arudino.command("s"))
     motion.forward(motor_board, power)
     while distance > sensor_min:
-        distance = arudino.command("s")
-    motion.stop(motor_board)
+        steps_count = []
+        for i in range(steps):
+            steps_count.append(int(arudino.command("s")))
+        distance = sum(steps_count) // steps
+
+
+def dynamic_speed(distance):
+    """
+    takes in the distance and returns corresponding motor value
+    :param distance:
+    :return:
+    """
+    speed_distance = [[800, 0.25], [800, 0.35], [1200, 0.4], [4000, 0.5], [40000000, 0.7]] # overflow value
+    try:
+        for i in range(len(speed_distance)):
+            if speed_distance[i][0] <= distance <= speed_distance[i+1][0]:
+                return speed_distance[i][1]
+    except IndexError:
+        print("Error with distance calculation")
+        return 0
