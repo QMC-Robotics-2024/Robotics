@@ -46,7 +46,7 @@ def markerpos(marker):
     # Spits out various info in relatiuon to visible markers
     '''
     :param marker: sr.robot3 marker
-    :return: [ho, vo, distance]
+    :return: [marker, ho, vo, distance]
     '''
     return [marker, marker.position.horizontal_angle, marker.position.vertical_angle, marker.position.distance]
 
@@ -66,3 +66,4 @@ def distance_update(robot, target_id):
             return marker.position.distance, marker.position.horizontal_angle
 
 ''' Please comment this it is almost unreadable'''
+""" Disagree there ie enough comments"""
