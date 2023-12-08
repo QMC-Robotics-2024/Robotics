@@ -13,8 +13,8 @@ from sr.robot3 import *
 # Power calculation
 def calculate_powers(motor_power):
     # This script multiplies the entered motor power by a value to change it by th right percentage to make the motors run at the same speed
-    motor_power_right = motor_power
-    motor_power_left = motor_power * -0.8
+    motor_power_right = motor_power*-1
+    motor_power_left = motor_power * 0.8
 
     # Return motor powers
     return motor_power_right, motor_power_left
@@ -40,14 +40,14 @@ def rotate_check(angle, thresh):
 # Movement subroutines
 # In this implementation, motor powers are pre-flipped to account for mounting arrangement so just stick a "-" infront to reverse direction
 # (sets to forward, will un'eff later)
-def reverse(board, motor_power):
+def forward(board, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 
     board.motors[0].power = motor_power_right
     board.motors[1].power = motor_power_left
 
-def forward(board, motor_power):
+def reverse(board, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 
