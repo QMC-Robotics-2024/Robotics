@@ -39,4 +39,10 @@ def lower_arm():
     '''
     pass
 
+def rotate_arm(angle_from_robot):
+    '''
+    rotates arm to desitred position
+    this will use the servo controler board
+    '''
+    pass
     
