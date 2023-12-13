@@ -1,7 +1,7 @@
 from sr.robot3 import *
 
 from Modules import vision
-from Modules import movement as motion
+from Modules import adapted_movement as motion
 from Modules import behaviour
 print("Script Running")
 '''
