@@ -64,7 +64,7 @@ def drive_to_marker(motor_board, power, distance, min):
     else:
         motion.stop(motor_board)
 
-def ultrasonic_drive(motor_board, power, arudino, sensor_min,distance):
+def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, robot):
     """
     This drives the robot at a slower speed using distance from the serial output
     of the arduino, until the distance is at a certain value
@@ -74,15 +74,21 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min,distance):
     :param sensor_min:
     :return:
     """
-    steps = 200
+    steps = 5
     distance = int(arudino.command("s"))
+    try:
+        values = vision.distance_update(robot, target.id)
+        turn_to_marker(motor_board, power + 0.25,values[1],0.001)
+        print("ARDUINO ROTATE", values[1])
+    except:
+        angle = 0
     motion.forward(motor_board, power)
     while distance > sensor_min:
         steps_count = []
         for i in range(steps):
             steps_count.append(int(arudino.command("s")))
         distance = sum(steps_count) // steps
-
+        print(distance)
 
 def dynamic_speed(distance):
     """
@@ -90,7 +96,7 @@ def dynamic_speed(distance):
     :param distance:
     :return:
     """
-    speed_distance = [[800, 0.25], [800, 0.35], [1200, 0.4], [4000, 0.5], [40000000, 0.7]] # overflow value
+    speed_distance = [[500, 0.25], [800, 0.35], [1200, 0.4], [4000, 0.5], [40000000, 0.7]] # overflow value
     try:
         for i in range(len(speed_distance)):
             if speed_distance[i][0] <= distance <= speed_distance[i+1][0]:
