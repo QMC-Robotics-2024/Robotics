@@ -18,7 +18,7 @@ rotat_power = 0.7
 
 stopping_distance = 800  # mm, distance from marker robot should stop and switch to ultrasonic
 
-angle_thresh = 0.01  # threshold for angle
+angle_thresh = 0.005 # threshold for angle
 
 scan_duration = 0.5  # how long it turns for when scanning
 check_duration = 0.4  # how long it checks for
@@ -88,13 +88,14 @@ while True:
                         print("Found Values")
             if distance > stopping_distance:
                 power = behaviour.dynamic_speed(distance)
-                rotat_power = power + 0.2
+                rotat_power = power + 0.25
                 behaviour.turn_to_marker(motor_board, rotat_power, angle, angle_thresh)
                 behaviour.drive_to_marker(motor_board, power, distance, stopping_distance)
             elif distance == stopping_distance or distance < stopping_distance:
                 print("[ARDUINO ACTIVE]")
-                behaviour.ultrasonic_drive(motor_board, arduino_speed, arduino, arduino_min, distance)
+                behaviour.ultrasonic_drive(motor_board, arduino_speed, arduino, arduino_min, vision, target_marker, robot)
                 motion.stop(motor_board)
+                print("MARKER STOP RUN COLLECT PROCEUDRE")
             else:
                 motion.stop(motor_board)
     elif not movement_values:
