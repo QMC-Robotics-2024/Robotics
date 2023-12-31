@@ -8,7 +8,6 @@ Callum Out
 
 import time
 
-
 def set_motion(parse):
     global motion
     motion = parse
@@ -104,3 +103,37 @@ def dynamic_speed(distance):
     except IndexError:
         print("Error with distance calculation")
         return 0
+def position_scan(org_zones, robot):
+    '''
+    See what position markers we can see.
+     ̶A̶v̶e̶r̶a̶g̶e̶ ̶a̶l̶l̶ ̶p̶o̶s̶i̶t̶i̶o̶n̶ ̶I̶D̶'̶s̶ ̶t̶o̶ ̶f̶i̶n̶d̶ ̶g̶e̶n̶e̶r̶a̶l̶ ̶d̶i̶r̶e̶c̶t̶i̶o̶n̶
+     Nope that wouldnt work me, what if you can see 27 and 0 you silly bastard
+     Okay find which planets we can see the most of their id's?
+    Then Move accordingly
+    '''
+    while True:
+        current_markers = robot.camera.see()
+        if current_markers:
+            pos_values = []
+            for marker in current_markers:
+                if marker.id in range(0,27):
+                    # found a pos marker
+                    pos_values.append(marker.id)
+            planets_count = []
+            for planet in org_zones:
+                current_planet_count = sum(id in pos_values for id in planet)
+                planets_count.append(current_planet_count)
+            most_index = planets_count.index(max(planets_count))
+            most_planet = org_zones[most_index]
+            print(f"PLANET SEEN: {most_planet}")
+            match most_index:
+                case 0:
+                    # yay we are already facing our zone
+                case 1:
+                    # turn left
+                case 2:
+                    # turn 180
+                case 3:
+                    # turn right
+
+
