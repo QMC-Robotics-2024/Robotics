@@ -35,8 +35,9 @@ def marker_sort(current_markers):
     # sort markers by distance,
     sorted_markers = []
     for marker in current_markers:
-        position = markerpos(marker)
-        sorted_markers.append(position)
+        if marker.id not in [i for i in range(0,29)]:
+            position = markerpos(marker)
+            sorted_markers.append(position)
     sorted(sorted_markers, key=lambda x: x[3])  # element at index 3 is distance
     target_marker = current_markers[current_markers.index(sorted_markers[0][0])]
     return target_marker
