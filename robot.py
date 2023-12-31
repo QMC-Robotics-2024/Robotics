@@ -3,6 +3,7 @@ from sr.robot3 import *
 from Modules import vision
 from Modules import adapted_movement as motion
 from Modules import behaviour
+from Modules import position
 print("Script Running")
 '''
 This script is the one the robot ultimately runs, so load all scripts needed into here
@@ -11,7 +12,8 @@ vision.py - Controls Robots camera and marker finding ability - Author Callum R
 
 '''
 # -- constants --
-dev = True  # developer mode
+dev = True# developer mode
+dev_zone = 0
 
 power = 0.7
 rotat_power = 0.7
@@ -33,6 +35,12 @@ power_board = robot.power_board
 robot.power_board.outputs[OUT_H0].is_enabled = True
 arduino = robot.arduino # using extended SR firmware (no reason really tbh)
 
+mode = robot.mode
+if mode == "COMP":
+    zone = robot.zone
+else:
+    zone = dev_zone
+base = position.zone_parse(zone) # give our zone to robot
 
 # -- vision prereq --
 current_markers = []  # what markers the robot can currently see
