@@ -28,10 +28,12 @@ rotate_increment_speed = 0.3
 
 arduino_speed = 0.2
 arduino_min = 400 # distance in mm arduino stops robot
+
 # -- boards --
 robot = Robot()
 motor_board = robot.motor_board
 power_board = robot.power_board
+servo_board = robot.servo_board
 robot.power_board.outputs[OUT_H0].is_enabled = True
 arduino = robot.arduino # using extended SR firmware (no reason really tbh)
 
