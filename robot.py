@@ -2,6 +2,7 @@ from sr.robot3 import *
 
 from Modules import vision
 from Modules import adapted_movement as motion
+from Modules import manipulator as arm
 from Modules import behaviour
 from Modules import position
 print("Script Running")
@@ -31,10 +32,16 @@ arduino_min = 400 # distance in mm arduino stops robot
 
 # -- boards --
 robot = Robot()
-motor_board = robot.motor_board
+
 power_board = robot.power_board
-servo_board = robot.servo_board
 robot.power_board.outputs[OUT_H0].is_enabled = True
+
+motor_board = robot.motor_board
+
+# Use these when arm control is needed
+#motor_board = robot.motor_boards["placeholderSerialAddress1"]
+#arm_motor_board = robot.motor_boards["placeholderSerialAddress2"]
+
 arduino = robot.arduino # using extended SR firmware (no reason really tbh)
 
 mode = robot.mode
