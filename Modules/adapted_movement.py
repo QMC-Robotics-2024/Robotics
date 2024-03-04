@@ -1,7 +1,7 @@
 '''
 This program controls all major movement functions of the robot
 
-If you have issues with this dm @hackercat77 or tag me on the discord. Odds are something stupid is eff'ed and I need to fix it
+If this eff's itself in during the compedtition someone else will have to fix it as I'll be on an Egyptian beach drinking cocktails
 
 Author: JP
 '''
