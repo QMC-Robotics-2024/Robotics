@@ -2,10 +2,12 @@
 Program to control the mechanism used for manipulating boxes (Asteroids/Egg)
 Program controls suction and raising and lowering of the mechanism
 
+If this eff's itself in during the competition someone else will have to fix it as I'll be on an Egyptian beach drinking cocktails
+
+
 Author: JP
 
 Syntax:
-
 arm.subroutine(arm_motor_board, power)
 
 '''
