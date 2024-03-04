@@ -1,7 +1,7 @@
 '''
 This program controls all major movement functions of the robot
 
-If this eff's itself in during the compedtition someone else will have to fix it as I'll be on an Egyptian beach drinking cocktails
+If this eff's itself in during the competition someone else will have to fix it as I'll be on an Egyptian beach drinking cocktails
 
 Author: JP
 '''
