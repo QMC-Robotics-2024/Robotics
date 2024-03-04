@@ -14,7 +14,7 @@ from sr.robot3 import *
 def calculate_powers(motor_power):
     # This script multiplies the entered motor power by a value to change it by th right percentage to make the motors run at the same speed
     motor_power_right = motor_power*-1
-    motor_power_left = motor_power * 0.7
+    motor_power_left = motor_power * 0.9
 
     # Return motor powers
     return motor_power_right, motor_power_left
