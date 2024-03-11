@@ -53,7 +53,6 @@ def markerpos(marker):
 
 
 def movement_calculate(target):
-    ### Could be made redundant if a flux-gate magnetometer is installed to the robot to attain measures of rotation
     # converts radians to degrees
     mov_angle = math.degrees(target.position.horizontal_angle)
     return [mov_angle, target.position.distance]
@@ -68,3 +67,4 @@ def distance_update(robot, target_id):
 
 ''' Please comment this it is almost unreadable'''
 """ Disagree there ie enough comments"""
+# no, make this clearer so other people can fix it if it breaks

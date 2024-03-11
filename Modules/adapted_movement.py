@@ -1,7 +1,7 @@
 '''
 This program controls all major movement functions of the robot
 
-If you have issues with this dm @hackercat77 or tag me on the discord. Odds are something stupid is eff'ed and I need to fix it
+If this eff's itself in during the competition someone else will have to fix it as I'll be on an Egyptian beach drinking cocktails
 
 Author: JP
 '''
@@ -14,7 +14,7 @@ from sr.robot3 import *
 def calculate_powers(motor_power):
     # This script multiplies the entered motor power by a value to change it by th right percentage to make the motors run at the same speed
     motor_power_right = motor_power*-1
-    motor_power_left = motor_power * 0.8
+    motor_power_left = motor_power * 0.9            #0.8 worked well on the test platform
 
     # Return motor powers
     return motor_power_right, motor_power_left
