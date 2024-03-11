@@ -25,7 +25,7 @@ stopping_distance = 800  # mm, distance from marker robot should stop and switch
 angle_thresh = 0.00005  # threshold for angle
 
 scan_duration = 0.5  # how long it turns for when scanning
-check_duration = 0.4  # how long it checks for
+check_duration = 0.35  # how long it checks for
 rotate_increment_speed = 0.5
 
 arduino_speed = 0.4
@@ -45,49 +45,43 @@ else:
     zone = dev_zone
 base = position.zone_parse(zone)  # give our zone to robot
 
-# -- vision pre req --
-current_markers = []  # what markers the robot can currently see
 # -- main run loop --
 behaviour.set_motion(motion)  # parse the motion script to behaviour
 while True:
-    '''
-    Variables:
-    movement_values - [angle (in degrees), distance] to nearest marker. If no markers, this is empty
-    '''
     try:
+        # inital search for a marker
         movement_values, target_marker, current_markers = vision.vision_run(robot, False, dev)
         id = target_marker.id
-    except TypeError:
+    except TypeError: # if no markers found set the values to empty
         movement_values = []
     if movement_values:
         print("Inital Values Stated")  # check if not empty
         while True:
-            distance = 0
+            distance = 0 # so dont move
             angle = 0
             try:
                 # try finding the distance, if it cant see it, set distance and angle to 0
                 distance, angle = vision.distance_update(robot, id)
                 print(f"Distance Updated: distance [{distance}], angle [{angle}]")
             except TypeError:
+                motion.stop(motor_board)
                 # this stops it if it cant find any asteroids, so it can search without blur
                 print("No Values Found")
-            if not distance and not angle:
+            if not distance and not angle: # if none found start spinning and search
                 print("Starting Check")
                 motion.stop(motor_board)
                 robot.sleep(check_duration)
                 try:
-                    distance, angle = vision.distance_update(robot, id)
+                    distance, angle = vision.distance_update(robot, id) # if it can update GREAT
                     print("Values found from check")
                 except TypeError:
                     # it can no longer find the marker, so update it
                     print("Lost Marker, Updating")
                     try:
                         movement_values, target_marker, current_markers = vision.vision_run(robot, False, dev)
-                        distance, angle = vision.distance_update(robot, target_marker.id)
-                    except TypeError:
+                        distance, angle = vision.distance_update(robot, target_marker.id) # try one last time
+                    except TypeError: # cant see any so start scanning
                         print("Beginning Scan")
-                        power = power
-                        rotat_power = rotat_power
                         current_markers = False
                         while not current_markers:
                             print("Scanning")
@@ -99,7 +93,8 @@ while True:
                         print("Found Values")
             if distance > stopping_distance:
                 power = behaviour.dynamic_speed(distance)
-                if angle > 5 * (3.14159) / 180:
+                if angle > 5 * (3.14159) / 180: # if the angle is too great, stop moving
+                    motion.stop(motor_board)
                     behaviour.turn_to_marker(motor_board, 0.25, angle, angle_thresh)
                 else:
                     behaviour.turn_to_marker(motor_board, rotat_power, angle, angle_thresh)
@@ -107,10 +102,10 @@ while True:
             elif distance == stopping_distance or distance < stopping_distance:
                 print("[ARDUINO ACTIVE]")
                 behaviour.ultrasonic_drive(motor_board, arduino_speed, arduino, arduino_min, vision, target_marker,
-                                           robot)
-                motion.stop(motor_board)
-                manipulator.lower_arm(arm_board,1)
-                robot.sleep(5)
+                                           robot) # move until positioned well
+                motion.stop(motor_board) # in position
+                manipulator.lower_arm(arm_board,0.3) # lower de arm
+                robot.sleep(1)
                 break
             else:
                 motion.stop(motor_board)
