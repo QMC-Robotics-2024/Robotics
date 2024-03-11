@@ -22,6 +22,9 @@ def raise_arm(board, arm_power):
 def lower_arm(board, arm_power):
     board.motors[0].power = -arm_power
 
+def stop_arm(board):
+    board.motors[0].power = 0
+
 def open_gripper(board, grip_power):
     board.motors[0].power = grip_power
 
