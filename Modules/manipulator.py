@@ -16,7 +16,7 @@ from sr.robot3 import *
 #----------Subroutines----------#
 def suction_on(board, suck_power):
     # Turns on suction
-    board.motors[2].power = suck_power
+    board.motors[2].power = suck_power # sorry did you have to call it "suck" power
     pass
 
 def suction_off(board):

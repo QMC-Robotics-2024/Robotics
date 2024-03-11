@@ -34,9 +34,6 @@ ELIF most belong to right, turn keep turning right until ours is mid (INDEX 3)
 ELSE turn 180 (INDEX 2)
 
 '''
-bs = zone_parse(2)
-org_zones = organise(bs)
-print(org_zones)
 '''
 def poses(base): # may need to explain this in person...
     opposite_base, opposite_mid = opposite(base)
