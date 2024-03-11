@@ -32,8 +32,8 @@ arduino_speed = 0.4
 arduino_min = 400  # distance in mm arduino stops robot
 # -- boards --
 robot = Robot()
-motor_board = robot.motor_boards["#SR0GBT"]
-arm_board = robot.motor_boards["#SR0RG1U"]
+motor_board = robot.motor_boards["SR0GBT"]
+arm_board = robot.motor_boards["SR0RG1U"]
 power_board = robot.power_board
 robot.power_board.outputs[OUT_H0].is_enabled = True
 arduino = robot.arduino  # using extended SR firmware (no reason really tbh)
@@ -109,7 +109,9 @@ while True:
                 behaviour.ultrasonic_drive(motor_board, arduino_speed, arduino, arduino_min, vision, target_marker,
                                            robot)
                 motion.stop(motor_board)
-                manipulator.suction_on(arm_board, 1)
+                manipulator.lower_arm(arm_board,1)
+                robot.sleep(5)
+                break
             else:
                 motion.stop(motor_board)
     elif not movement_values:

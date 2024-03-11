@@ -31,8 +31,8 @@ def scan_for_markers(robot, rotate_power, scan_duration, check_duration):
         scan_time = time.time() + scan_duration
         print("Search Scan")
         while time.time() < scan_time:
-            motion.turn_clockwise(robot.motor_board, rotate_power)
-        motion.stop(robot.motor_board)
+            motion.turn_clockwise(robot.motor_boards["SR0GBT"], rotate_power)
+        motion.stop(robot.motor_boards["SR0GBT"])
         check_time = time.time() + check_duration
         print("Waiting...")
         while time.time() < check_time:
