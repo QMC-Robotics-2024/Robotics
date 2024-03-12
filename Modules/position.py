@@ -1,4 +1,5 @@
 import math
+# define all planet id's
 planet_0 = [i for i in range(0,7)]
 planet_1 = [i for i in range(7,14)]
 planet_2 = [i for i in range(14,21)]
