@@ -114,7 +114,28 @@ def dynamic_speed(distance):
         print("Error with distance calculation")
         return 0
 
-
+def rtb(robot,motor,base,vision,motion):
+    '''
+    this runs once the block has been collected, and it returns to base
+    '''
+    base_found = False
+    while not base_found:
+        seen_markers = robot.camera.see()
+        for marker in seen_markers:
+            if marker.id in base:
+                base_value = marker.id
+                base_found = True
+        motion.turn_clockwise()
+    values = vision.distance_update(robot, base_found)
+    while values[0] > 400:
+        turn_to_marker(motor,0.75,values[1],0.00005)
+        drive_to_marker(motor,0.6,values[1],400)
+        try:
+            values = vision.distance_update(robot,base_value)
+        except:
+            motion.stop(motor)
+            robot.sleep(2)
+            values=vision.distance_update(robot,base_value)
 def position_scan(org_zones, robot, motor):
     '''
     See what position markers we can see.
@@ -128,7 +149,7 @@ def position_scan(org_zones, robot, motor):
     mod(middle)
     return pos * mod(middle)
     keep yapping
-
+    like this isnt needed wtf
     '''
     while True:
         current_markers = robot.camera.see()
