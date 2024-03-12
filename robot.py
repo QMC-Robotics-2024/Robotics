@@ -20,7 +20,7 @@ dev = True  # developer mode
 dev_zone = 0
 
 power = 0.8
-rotat_power = 0.85
+rotat_power = 0.75
 
 stopping_distance = 800  # mm, distance from marker robot should stop and switch to ultrasonic
 
@@ -101,7 +101,7 @@ while True:
                 else:
                     behaviour.turn_to_marker(motor_board, rotat_power, angle, angle_thresh)
                     behaviour.drive_to_marker(motor_board, power, distance, stopping_distance)
-            elif distance == stopping_distance or distance < stopping_distance:
+            elif distance <= stopping_distance:
                 print("[ARDUINO ACTIVE]")
                 behaviour.ultrasonic_drive(motor_board, arduino_speed, arduino, arduino_min, vision, target_marker,
                                            robot) # move until positioned well
