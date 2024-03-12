@@ -45,7 +45,7 @@ if mode == "COMP":
     zone = robot.zone
 else:
     zone = dev_zone
-base = position.zone_parse(zone)  # give our zone to robot
+base = position.zone_parse(zone)  # give our zone  id's to robot
 
 # -- main run loop --
 behaviour.set_motion(motion)  # parse the motion script to behaviour
