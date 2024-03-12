@@ -11,6 +11,8 @@ print("Script Running")
 This script is the one the robot ultimately runs, so load all scripts needed into here
 
 vision.py - Controls Robots camera and marker finding ability - Author Callum R
+position.py - info about pos -
+behaviour.py - ltitteraly everything 
 
 '''
 # -- constants --
