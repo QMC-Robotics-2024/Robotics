@@ -106,6 +106,9 @@ while True:
                 motion.stop(motor_board) # in position
                 manipulator.lower_arm(arm_board,0.3) # lower de arm
                 robot.sleep(1)
+                manipulator.stop_arm(arm_board)
+                manipulator.close_gripper(arm_board,0.3)
+                robot.sleep(1)
                 break
             else:
                 motion.stop(motor_board)
