@@ -9,7 +9,7 @@ Callum Out
 import time
 
 
-def set_motion(parse):
+def set_motion(parse): # loads the motion file as it is from robot.py
     global motion
     motion = parse
 
@@ -26,14 +26,19 @@ def scan_for_markers(robot, rotate_power, scan_duration, check_duration):
     a set amount of time then scan for any markers present for a given time
     if there isnt any, itll just re-run the loop and rotate again.
     """
-    current_markers = []
+    current_markers = [] # array of markers it sees
     while not current_markers:
-        scan_time = time.time() + scan_duration
+        scan_time = time.time() + scan_duration # time it moves until
         print("Search Scan")
         while time.time() < scan_time:
-            motion.turn_clockwise(robot.motor_boards["SR0GBT"], rotate_power)
-        motion.stop(robot.motor_boards["SR0GBT"])
+            motion.turn_clockwise(robot.motor_boards["SR0GBT"], rotate_power) # move until time
+        motion.stop(robot.motor_boards["SR0GBT"]) # stop moving
         check_time = time.time() + check_duration
+        """
+        put simply there is a maximum time it can check for before moving and checking again
+        the next few lines will wait (check duration) amount of time until moving again, if it
+        sees anything in this time period, it will break and instead go to that
+        """
         print("Waiting...")
         while time.time() < check_time:
             current_markers = robot.camera.see()
@@ -75,8 +80,8 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, ro
     :param sensor_min:
     :return:
     """
-    steps = 5
-    distance = int(arudino.command("s"))
+    steps = 5 # used for calculating mean
+    distance = int(arudino.command("s")) # get inital distance from ultrasonic sensor
     try:
         values = vision.distance_update(robot, target.id)
         turn_to_marker(motor_board, power + 0.25, values[1], 0.001)
