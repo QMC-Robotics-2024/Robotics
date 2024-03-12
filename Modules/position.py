@@ -26,6 +26,7 @@ def organise(base): # home, left, opposite, right
         # trg_mid = sum(trg_base) // len(trg_base)
         org_zones.append(trg_base)
     return org_zones
+
 '''
 Scan for positional markers
 
