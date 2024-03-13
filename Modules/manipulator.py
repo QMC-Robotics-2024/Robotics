@@ -26,7 +26,10 @@ def stop_arm(board):
     board.motors[0].power = 0
 
 def open_gripper(board, grip_power):
-    board.motors[0].power = grip_power
+    board.motors[1].power = grip_power
 
 def close_gripper(board, grip_power):
-    board.motors[0].power = -grip_power
+    board.motors[1].power = -grip_power
+
+def stop_gripper(board):
+    board.motors[1].power = 0
