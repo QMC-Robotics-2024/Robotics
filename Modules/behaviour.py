@@ -80,22 +80,25 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, ro
     :param sensor_min:
     :return:
     """
-    steps = 5 # used for calculating mean
+    steps = 7 # used for calculating mean
     distance = int(arudino.command("s")) # get inital distance from ultrasonic sensor
-    try:
-        values = vision.distance_update(robot, target.id) # final rotate
-        turn_to_marker(motor_board, power + 0.25, values[1], 0.001)
-        print("ARDUINO ROTATE", values[1])  # rotate if can
-    except:
-        angle = 0 # if it can no longer get data from camera,
-    motion.forward(motor_board, power)
-    while distance > sensor_min: # this will permanetly run until our min distanec
+    while distance > sensor_min:# this will permanetly run until our min distanec
         steps_count = []
+        motion.forward(motor_board, power)
         for i in range(steps):
             steps_count.append(int(arudino.command("s")))
             # append 5 values to the array
         distance = sum(steps_count) // steps # workout mean distance
         print(distance)
+        try:
+            values = vision.distance_update(robot, target.id)  # final rotate
+            turn_to_marker(motor_board, 0.12 , values[1], 0.005)
+            robot.sleep(0.25)
+            motion.stop(motor_board)
+            motion.forward(motor_board, power)
+            print("ARDUINO ROTATE", values[1])  # rotate if can
+        except:
+            angle = 0  # if it can no longer get data from camera,
 
 
 
@@ -114,7 +117,7 @@ def dynamic_speed(distance):
         print("Error with distance calculation")
         return 0
 
-def rtb(robot,motor,base,vision,motion):
+def rtb(robot,motor,base,vision,motion,rotate_power):
     '''
     this runs once the block has been collected, and it returns to base
     '''
@@ -125,11 +128,22 @@ def rtb(robot,motor,base,vision,motion):
             if marker.id in base:
                 base_value = marker.id
                 base_found = True
-        motion.turn_clockwise()
-    values = vision.distance_update(robot, base_found)
+                values = vision.distance_update(robot, base_value)
+                print(values)
+                break
+        if base_found:
+            break
+        motion.turn_clockwise(robot.motor_boards["SR0GBT"], rotate_power-0.2)
+        robot.sleep(0.5)
+        motion.stop(robot.motor_boards["SR0GBT"])
+        robot.sleep(1)
+    print(base_value)
+
     while values[0] > 400:
         turn_to_marker(motor,0.75,values[1],0.00005)
-        drive_to_marker(motor,0.6,values[1],400)
+        print("turned")
+        drive_to_marker(motor,0.6,values[0],400)
+        print("driveded")
         try:
             values = vision.distance_update(robot,base_value)
         except:
