@@ -2,91 +2,98 @@ from sr.robot3 import *
 
 from Modules import vision
 from Modules import adapted_movement as motion
+from Modules import manipulator as arm
 from Modules import behaviour
 from Modules import position
-from Modules import manipulator
-
 print("Script Running")
 '''
 This script is the one the robot ultimately runs, so load all scripts needed into here
 
 vision.py - Controls Robots camera and marker finding ability - Author Callum R
-position.py - info about pos -
-behaviour.py - ltitteraly everything 
 
 '''
 # -- constants --
-dev = True  # developer mode
+dev = True# developer mode
 dev_zone = 0
 
 power = 0.7
-rotat_power = 0.85
+rotat_power = 0.7
 
-stopping_distance = 500  # mm, distance from marker robot should stop and switch to ultrasonic
+stopping_distance = 800  # mm, distance from marker robot should stop and switch to ultrasonic
 
-angle_thresh = 0.0000005  # threshold for angle
+angle_thresh = 0.005 # threshold for angle
 
 scan_duration = 0.5  # how long it turns for when scanning
-check_duration = 0.35  # how long it checks for
-rotate_increment_speed = 0.5
+check_duration = 0.4  # how long it checks for
+rotate_increment_speed = 0.3
 
-arduino_speed = 0.3141
-arduino_min = 50  # distance in mm arduino stops robot
+arduino_speed = 0.2
+arduino_min = 400 # distance in mm arduino stops robot
+
 # -- boards --
 robot = Robot()
-motor_board = robot.motor_boards["SR0GBT"]
-arm_board = robot.motor_boards["SR0RG1U"]
+
 power_board = robot.power_board
 robot.power_board.outputs[OUT_H0].is_enabled = True
-arduino = robot.arduino  # using extended SR firmware (no reason really tbh)
-current_markers = []
+
+motor_board = robot.motor_board
+
+# Use these when arm control is needed
+#motor_board = robot.motor_boards["placeholderSerialAddress1"]
+#arm_motor_board = robot.motor_boards["placeholderSerialAddress2"]
+
+arduino = robot.arduino # using extended SR firmware (no reason really tbh)
+
 mode = robot.mode
 if mode == "COMP":
     zone = robot.zone
 else:
     zone = dev_zone
-base = position.zone_parse(zone)  # give our zone  id's to robot
+base = position.zone_parse(zone) # give our zone to robot
 
+# -- vision prereq --
+current_markers = []  # what markers the robot can currently see
 # -- main run loop --
-behaviour.set_motion(motion)  # parse the motion script to behaviour
-manipulator.open_gripper(arm_board,1)
-robot.sleep(1)
-manipulator.stop_gripper(arm_board)
+behaviour.set_motion(motion) # parse the motion script to behaviour
 while True:
+    '''
+    Variables:
+    movement_values - [angle (in degrees), distance] to nearest marker. If no markers, this is empty
+    '''
     try:
-        # inital search for a marker
         movement_values, target_marker, current_markers = vision.vision_run(robot, False, dev)
         id = target_marker.id
-    except TypeError:  # if no markers found set the values to empty
+    except TypeError:
         movement_values = []
     if movement_values:
         print("Inital Values Stated")  # check if not empty
         while True:
-            distance = 0  # so dont move
+            distance = 0
             angle = 0
             try:
                 # try finding the distance, if it cant see it, set distance and angle to 0
                 distance, angle = vision.distance_update(robot, id)
                 print(f"Distance Updated: distance [{distance}], angle [{angle}]")
             except TypeError:
-                motion.stop(motor_board)
                 # this stops it if it cant find any asteroids, so it can search without blur
                 print("No Values Found")
-            if not distance and not angle:  # if none found start spinning and search
+            if not distance and not angle:
                 print("Starting Check")
                 motion.stop(motor_board)
                 robot.sleep(check_duration)
                 try:
-                    distance, angle = vision.distance_update(robot, id)  # if it can update GREAT
+                    distance, angle = vision.distance_update(robot, id)
                     print("Values found from check")
                 except TypeError:
                     # it can no longer find the marker, so update it
                     print("Lost Marker, Updating")
                     try:
                         movement_values, target_marker, current_markers = vision.vision_run(robot, False, dev)
-                        distance, angle = vision.distance_update(robot, target_marker.id)  # try one last time
-                    except TypeError:  # cant see any so start scanning
+                        distance, angle = vision.distance_update(robot, target_marker.id)
+                    except TypeError:
                         print("Beginning Scan")
+                        power = 0.5
+                        rotat_power = 0.7
                         current_markers = False
                         while not current_markers:
                             print("Scanning")
@@ -98,32 +105,14 @@ while True:
                         print("Found Values")
             if distance > stopping_distance:
                 power = behaviour.dynamic_speed(distance)
-                if angle > 5 * (3.14159) / 180:  # if the angle is too great, stop moving
-                    motion.stop(motor_board)
-                    behaviour.turn_to_marker(motor_board, 0.25, angle, angle_thresh)
-                else:
-                    behaviour.turn_to_marker(motor_board, rotat_power, angle, angle_thresh)
-                    behaviour.drive_to_marker(motor_board, power, distance, stopping_distance)
-            elif distance <= stopping_distance:
+                rotat_power = power + 0.25
+                behaviour.turn_to_marker(motor_board, rotat_power, angle, angle_thresh)
+                behaviour.drive_to_marker(motor_board, power, distance, stopping_distance)
+            elif distance == stopping_distance or distance < stopping_distance:
                 print("[ARDUINO ACTIVE]")
-                behaviour.ultrasonic_drive(motor_board, arduino_speed, arduino, arduino_min, vision, target_marker,
-                                           robot)  # move until positioned well
-                motion.stop(motor_board)  # in position
-                manipulator.lower_arm(arm_board, 0.7)
-                print("Waiting")# lower de arm
-                robot.sleep(1)
-                print("No Longer waitinng")
-                manipulator.stop_arm(arm_board)
-                robot.sleep(1)
-                print("grip")
-                manipulator.close_gripper(arm_board, 0.5)
-                robot.sleep(1)
-                manipulator.stop_arm(arm_board)
-                robot.sleep(1)
-                manipulator.raise_arm(arm_board,1)
-                robot.sleep(2)
-                manipulator.stop_arm(arm_board)
-                behaviour.rtb(robot,motor_board,base,vision,motion,rotat_power)
+                behaviour.ultrasonic_drive(motor_board, arduino_speed, arduino, arduino_min, vision, target_marker, robot)
+                motion.stop(motor_board)
+                print("MARKER STOP RUN COLLECT PROCEUDRE")
             else:
                 motion.stop(motor_board)
     elif not movement_values:
@@ -133,7 +122,7 @@ while True:
 
 """
 duration = movement.angle_to_duration(movement_values[0], angle_thresh)
-        distance = movement_values[1]
+        distance = movement_values[1] 
         print(distance)
         if duration != 0: # if rotation needed
             print("Rotating")
@@ -147,6 +136,3 @@ duration = movement.angle_to_duration(movement_values[0], angle_thresh)
                     movement.turn_anticlockwise(motor_board, rotat_power)
 
 """
-
-# SR0GBT
-# SR0RG1U

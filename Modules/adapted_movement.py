@@ -28,13 +28,23 @@ def angle_to_duration(angle, thresh):
         duration = angle * (0.85/90)
     return abs(duration)
 
-def rotate_check(angle, thresh):
+
+def rotate_check(angle, thresh) -> int:
+    """
+    This checks whether the robot needs to turn or not
+    :param angle: the horizontal angle to the block
+    :param thresh: the uncertainty in the angle
+    1: it is to the right
+    -1: it is to the left
+    0: it is within the threshold
+    """
     if angle >= thresh:
         return 1
     elif angle <= -thresh:
         return -1
     else:
         return 0
+
 
 # Movement subroutines
 # In this implementation, motor powers are pre-flipped to account for mounting arrangement so just stick a "-" infront to reverse direction
@@ -45,12 +55,14 @@ def forward(board, motor_power):
     board.motors[0].power = motor_power_right
     board.motors[1].power = motor_power_left
 
+
 def reverse(board, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
 
     board.motors[0].power = -motor_power_right
     board.motors[1].power = -motor_power_left
+
 
 def turn_anticlockwise(board, motor_power):
     # Calculate motor powers
@@ -60,6 +72,7 @@ def turn_anticlockwise(board, motor_power):
     board.motors[0].power = motor_power_right
     board.motors[1].power = -motor_power_left
 
+
 def turn_clockwise(board, motor_power):
     # Calculate motor powers
     motor_power_right, motor_power_left = calculate_powers(motor_power)
@@ -67,6 +80,7 @@ def turn_clockwise(board, motor_power):
     # Turns clockwise by running the left motor backward and the right motor forward
     board.motors[0].power = -motor_power_right
     board.motors[1].power = motor_power_left
+
 
 def stop(board):
     # Stops motors

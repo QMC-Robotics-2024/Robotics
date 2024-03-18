@@ -6,7 +6,16 @@ planet_2 = [i for i in range(14,21)]
 planet_3 = [i for i in range(21,28)]
 
 planets = [planet_0,planet_1,planet_2,planet_3]
-def zone_parse(zone):
+
+
+def zone_parse(zone: int) -> list[int]:
+
+    """
+    Checks which zone the robot is in
+    :param zone: the starting zone the robot is placed in
+    :return base: a list of the marker id's for the starting zone
+    """
+
     match zone:
         case 0:
             base = planet_0
@@ -18,7 +27,8 @@ def zone_parse(zone):
             base = planet_3
     return base
 
-def organise(base): # home, left, opposite, right
+
+def organise(base: list) -> list: # home, left, opposite, right
     org_zones = []
     for i in range(0,4):
         index = (planets.index(base) + i) % len(planets)
