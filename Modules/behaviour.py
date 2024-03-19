@@ -80,7 +80,7 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, ro
     :param sensor_min:
     :return:
     """
-    steps = 7 # used for calculating mean
+    steps = 4 # used for calculating mean
     distance = int(arudino.command("s")) # get inital distance from ultrasonic sensor
     while distance > sensor_min:# this will permanetly run until our min distanec
         steps_count = []
@@ -92,7 +92,7 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, ro
         print(distance)
         try:
             values = vision.distance_update(robot, target.id)  # final rotate
-            turn_to_marker(motor_board, 0.12 , values[1], 0.005)
+            turn_to_marker(motor_board, 0.1 , values[1], 0.005)
             robot.sleep(0.25)
             motion.stop(motor_board)
             motion.forward(motor_board, power)
@@ -138,18 +138,36 @@ def rtb(robot,motor,base,vision,motion,rotate_power):
         motion.stop(robot.motor_boards["SR0GBT"])
         robot.sleep(1)
     print(base_value)
+    try:
+        while values[0] > 1000:
+            try:
+                turn_to_marker(motor,0.75,values[1],0.00005)
+                print("turned")
+                drive_to_marker(motor,0.6,values[0],400)
+                print("driveded")
+                try:
+                    values = vision.distance_update(robot,base_value)
+                except:
+                    motion.stop(motor)
+                    robot.sleep(2)
+                    values=vision.distance_update(robot,base_value)
+            except:
+                robot.sleep(2)
+                while values[0] > 1000:
+                    turn_to_marker(motor, 0.75, values[1], 0.00005)
+                    print("turned")
+                    drive_to_marker(motor, 0.6, values[0], 400)
+                    print("driveded")
+                    try:
+                        values = vision.distance_update(robot, base_value)
+                    except:
+                        motion.stop(motor)
+                        robot.sleep(2)
+                        values = vision.distance_update(robot, base_value)
+    except:
+        robot.sleep(2)
 
-    while values[0] > 400:
-        turn_to_marker(motor,0.75,values[1],0.00005)
-        print("turned")
-        drive_to_marker(motor,0.6,values[0],400)
-        print("driveded")
-        try:
-            values = vision.distance_update(robot,base_value)
-        except:
-            motion.stop(motor)
-            robot.sleep(2)
-            values=vision.distance_update(robot,base_value)
+
 def position_scan(org_zones, robot, motor):
     '''
     See what position markers we can see.

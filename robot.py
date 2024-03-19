@@ -30,8 +30,8 @@ scan_duration = 0.5  # how long it turns for when scanning
 check_duration = 0.35  # how long it checks for
 rotate_increment_speed = 0.5
 
-arduino_speed = 0.3141
-arduino_min = 50  # distance in mm arduino stops robot
+arduino_speed = 0.314159265
+arduino_min = 70  # distance in mm arduino stops robot
 # -- boards --
 robot = Robot()
 motor_board = robot.motor_boards["SR0GBT"]
@@ -49,7 +49,7 @@ base = position.zone_parse(zone)  # give our zone  id's to robot
 
 # -- main run loop --
 behaviour.set_motion(motion)  # parse the motion script to behaviour
-manipulator.open_gripper(arm_board,1)
+manipulator.open_gripper(arm_board, 1)
 robot.sleep(1)
 manipulator.stop_gripper(arm_board)
 while True:
@@ -110,20 +110,30 @@ while True:
                                            robot)  # move until positioned well
                 motion.stop(motor_board)  # in position
                 manipulator.lower_arm(arm_board, 0.7)
-                print("Waiting")# lower de arm
+                print("Waiting")  # lower de arm
                 robot.sleep(1)
                 print("No Longer waitinng")
                 manipulator.stop_arm(arm_board)
                 robot.sleep(1)
-                print("grip")
-                manipulator.close_gripper(arm_board, 0.5)
+                print("closing grip")
+                manipulator.close_gripper(arm_board, 1)
                 robot.sleep(1)
-                manipulator.stop_arm(arm_board)
+                manipulator.stop_gripper(arm_board)
                 robot.sleep(1)
-                manipulator.raise_arm(arm_board,1)
+                print("raising arm")
+                manipulator.raise_arm(arm_board, 1)
                 robot.sleep(2)
                 manipulator.stop_arm(arm_board)
-                behaviour.rtb(robot,motor_board,base,vision,motion,rotat_power)
+                behaviour.rtb(robot, motor_board, base, vision, motion, rotat_power)
+                manipulator.open_gripper(arm_board,0.7)
+                motion.turn_clockwise(motor_board, 0.5)
+                robot.sleep(1)
+                manipulator.stop_gripper(arm_board)
+                motion.stop(motor_board)
+                motion.forward(motor_board,0.7)
+                robot.sleep(0.4)
+                motion.stop(motor_board)
+                print("NEXT BOX")
             else:
                 motion.stop(motor_board)
     elif not movement_values:
