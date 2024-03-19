@@ -32,7 +32,7 @@ def vision_run(robot, save=False, dev=False):
 
 
 def marker_sort(current_markers):
-    # sort markers by distance,
+    """sort markers by distance"""
     sorted_markers = []
     for marker in current_markers:
         if marker.id not in [i for i in range(0,29)]:
