@@ -52,6 +52,7 @@ behaviour.set_motion(motion)  # parse the motion script to behaviour
 manipulator.open_gripper(arm_board, 1)
 robot.sleep(1)
 manipulator.stop_gripper(arm_board)
+# reset gripper
 while True:
     try:
         # inital search for a marker
@@ -100,7 +101,7 @@ while True:
                 power = behaviour.dynamic_speed(distance)
                 if angle > 5 * (3.14159) / 180:  # if the angle is too great, stop moving
                     motion.stop(motor_board)
-                    behaviour.turn_to_marker(motor_board, 0.25, angle, angle_thresh)
+                    behaviour.turn_to_marker(motor_board, 0.2, angle, angle_thresh)
                 else:
                     behaviour.turn_to_marker(motor_board, rotat_power, angle, angle_thresh)
                     behaviour.drive_to_marker(motor_board, power, distance, stopping_distance)
@@ -126,10 +127,11 @@ while True:
                 manipulator.stop_arm(arm_board)
                 behaviour.rtb(robot, motor_board, base, vision, motion, rotat_power)
                 manipulator.open_gripper(arm_board,0.7)
-                motion.turn_clockwise(motor_board, 0.5)
+                manipulator.lower_arm(arm_board,0.5)
                 robot.sleep(1)
                 manipulator.stop_gripper(arm_board)
-                motion.stop(motor_board)
+                manipulator.stop_arm(arm_board)
+                motion.turn_clockwise(motor_board, 0.5)
                 motion.forward(motor_board,0.7)
                 robot.sleep(0.4)
                 motion.stop(motor_board)
