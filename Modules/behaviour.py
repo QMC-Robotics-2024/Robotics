@@ -27,6 +27,7 @@ def scan_for_markers(robot, rotate_power, scan_duration, check_duration):
     if there isnt any, itll just re-run the loop and rotate again.
     """
     current_markers = []  # array of markers it sees
+    targets = [x for x in range(150,200)]
     while not current_markers:
         scan_time = time.time() + scan_duration  # time it moves until
         print("Search Scan")
@@ -41,7 +42,10 @@ def scan_for_markers(robot, rotate_power, scan_duration, check_duration):
         """
         print("Waiting...")
         while time.time() < check_time:
-            current_markers = robot.camera.see()
+            precheck_markers = robot.camera.see()
+            for marker in precheck_markers:
+                if marker.id in targets:
+                    current_markers.append(marker)
             if current_markers:
                 break
     return current_markers
