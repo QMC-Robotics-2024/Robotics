@@ -29,7 +29,7 @@ def scan_for_markers(robot, rotate_power, scan_duration, check_duration):
     current_markers = [] # array of markers it sees
     while not current_markers:
         scan_time = time.time() + scan_duration # time it moves until
-        print("Search Scan")
+        print("[BEHAVIOUR] Beginning My Scan")
         while time.time() < scan_time:
             motion.turn_clockwise(robot.motor_boards["SR0GBT"], rotate_power) # move until time
         motion.stop(robot.motor_boards["SR0GBT"]) # stop moving
@@ -43,6 +43,7 @@ def scan_for_markers(robot, rotate_power, scan_duration, check_duration):
         while time.time() < check_time:
             current_markers = robot.camera.see()
             if current_markers:
+                print("MARKERS FOUND")
                 break
     return current_markers
 
@@ -89,7 +90,7 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, ro
             steps_count.append(int(arudino.command("s")))
             # append 5 values to the array
         distance = sum(steps_count) // steps # workout mean distance
-        print(distance)
+        print(f"[ARDUINO]: {distance}")
         try:
             values = vision.distance_update(robot, target.id)  # final rotate
             turn_to_marker(motor_board, 0.1 , values[1], 0.005)
