@@ -9,7 +9,7 @@ Callum Out
 import time
 
 
-def set_motion(parse): # loads the motion file as it is from robot.py
+def set_motion(parse):  # loads the motion file as it is from robot.py
     global motion
     motion = parse
 
@@ -26,13 +26,14 @@ def scan_for_markers(robot, rotate_power, scan_duration, check_duration):
     a set amount of time then scan for any markers present for a given time
     if there isnt any, itll just re-run the loop and rotate again.
     """
-    current_markers = [] # array of markers it sees
+    current_markers = []  # array of markers it sees
+    targets = [x for x in range(150,200)]
     while not current_markers:
         scan_time = time.time() + scan_duration # time it moves until
         print("[BEHAVIOUR] Beginning My Scan")
         while time.time() < scan_time:
-            motion.turn_clockwise(robot.motor_boards["SR0GBT"], rotate_power) # move until time
-        motion.stop(robot.motor_boards["SR0GBT"]) # stop moving
+            motion.turn_clockwise(robot.motor_boards["SR0GBT"], rotate_power)  # move until time
+        motion.stop(robot.motor_boards["SR0GBT"])  # stop moving
         check_time = time.time() + check_duration
         """
         put simply there is a maximum time it can check for before moving and checking again
@@ -41,7 +42,10 @@ def scan_for_markers(robot, rotate_power, scan_duration, check_duration):
         """
         print("Waiting...")
         while time.time() < check_time:
-            current_markers = robot.camera.see()
+            precheck_markers = robot.camera.see()
+            for marker in precheck_markers:
+                if marker.id in targets:
+                    current_markers.append(marker)
             if current_markers:
                 print("MARKERS FOUND")
                 break
@@ -81,9 +85,9 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, ro
     :param sensor_min:
     :return:
     """
-    steps = 4 # used for calculating mean
-    distance = int(arudino.command("s")) # get inital distance from ultrasonic sensor
-    while distance > sensor_min:# this will permanetly run until our min distanec
+    steps = 4  # used for calculating mean
+    distance = int(arudino.command("s"))  # get inital distance from ultrasonic sensor
+    while distance > sensor_min:  # this will permanetly run until our min distanec
         steps_count = []
         motion.forward(motor_board, power)
         for i in range(steps):
@@ -93,14 +97,13 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, ro
         print(f"[ARDUINO]: {distance}")
         try:
             values = vision.distance_update(robot, target.id)  # final rotate
-            turn_to_marker(motor_board, 0.1 , values[1], 0.005)
+            turn_to_marker(motor_board, 0.1, values[1], 0.005)
             robot.sleep(0.25)
             motion.stop(motor_board)
             motion.forward(motor_board, power)
             print("ARDUINO ROTATE", values[1])  # rotate if can
         except:
             angle = 0  # if it can no longer get data from camera,
-
 
 
 def dynamic_speed(distance):
@@ -118,10 +121,8 @@ def dynamic_speed(distance):
         print("Error with distance calculation")
         return 0
 
-def rtb(robot,motor,base,vision,motion,rotate_power):
-    '''
-    this runs once the block has been collected, and it returns to base
-    '''
+
+def rtb_find(robot, vision, motion, rotate_power, base):
     base_found = False
     while not base_found:
         seen_markers = robot.camera.see()
@@ -134,27 +135,23 @@ def rtb(robot,motor,base,vision,motion,rotate_power):
                 break
         if base_found:
             break
-        motion.turn_clockwise(robot.motor_boards["SR0GBT"], rotate_power-0.2)
+        motion.turn_clockwise(robot.motor_boards["SR0GBT"], rotate_power - 0.2)
         robot.sleep(0.5)
         motion.stop(robot.motor_boards["SR0GBT"])
         robot.sleep(1)
     print(base_value)
-    try:
-        while values[0] > 1000:
-            try:
-                turn_to_marker(motor,0.75,values[1],0.00005)
-                print("turned")
-                drive_to_marker(motor,0.6,values[0],400)
-                print("driveded")
+    return values, base_value
+
+
+def rtb(robot, motor, base, vision, motion, rotate_power):
+    values = []
+    at_base = False
+    while not at_base:
+        while not values:
+            values, base_value = rtb_find(robot, vision, motion, rotate_power, base)
+        try:
+            while values[0] > 1000:
                 try:
-                    values = vision.distance_update(robot,base_value)
-                except:
-                    motion.stop(motor)
-                    robot.sleep(2)
-                    values=vision.distance_update(robot,base_value)
-            except:
-                robot.sleep(2)
-                while values[0] > 1000:
                     turn_to_marker(motor, 0.75, values[1], 0.00005)
                     print("turned")
                     drive_to_marker(motor, 0.6, values[0], 400)
@@ -165,8 +162,22 @@ def rtb(robot,motor,base,vision,motion,rotate_power):
                         motion.stop(motor)
                         robot.sleep(2)
                         values = vision.distance_update(robot, base_value)
-    except:
-        robot.sleep(2)
+                except:
+                    robot.sleep(2)
+                    while values[0] > 1000:
+                        turn_to_marker(motor, 0.75, values[1], 0.00005)
+                        print("turned")
+                        drive_to_marker(motor, 0.6, values[0], 400)
+                        print("driveded")
+                        try:
+                            values = vision.distance_update(robot, base_value)
+                        except:
+                            motion.stop(motor)
+                            robot.sleep(2)
+                            values = vision.distance_update(robot, base_value)
+                    at_base = True
+        except:
+            pass
 
 
 def position_scan(org_zones, robot, motor):
