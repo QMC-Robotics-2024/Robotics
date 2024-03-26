@@ -8,7 +8,6 @@ Callum Out
 
 import time
 
-
 def set_motion(parse):  # loads the motion file as it is from robot.py
     global motion
     motion = parse
@@ -85,7 +84,7 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, ro
     :param sensor_min:
     :return:
     """
-    steps = 4  # used for calculating mean
+    steps = 3  # used for calculating mean
     distance = int(arudino.command("s"))  # get inital distance from ultrasonic sensor
     while distance > sensor_min:  # this will permanetly run until our min distanec
         steps_count = []
@@ -142,42 +141,71 @@ def rtb_find(robot, vision, motion, rotate_power, base):
     print(base_value)
     return values, base_value
 
-
 def rtb(robot, motor, base, vision, motion, rotate_power):
     values = []
     at_base = False
     while not at_base:
         while not values:
             values, base_value = rtb_find(robot, vision, motion, rotate_power, base)
-        try:
-            while values[0] > 1000:
+        if values[0]:
+            while values[0] > 2500:
                 try:
                     turn_to_marker(motor, 0.75, values[1], 0.00005)
-                    print("turned")
+                    print(values[0])
                     drive_to_marker(motor, 0.6, values[0], 400)
                     print("driveded")
                     try:
                         values = vision.distance_update(robot, base_value)
                     except:
-                        motion.stop(motor)
-                        robot.sleep(2)
-                        values = vision.distance_update(robot, base_value)
+                        at_base = True
+                        break
                 except:
-                    robot.sleep(2)
                     while values[0] > 1000:
                         turn_to_marker(motor, 0.75, values[1], 0.00005)
-                        print("turned")
+                        print(values)
                         drive_to_marker(motor, 0.6, values[0], 400)
                         print("driveded")
                         try:
                             values = vision.distance_update(robot, base_value)
                         except:
                             motion.stop(motor)
-                            robot.sleep(2)
-                            values = vision.distance_update(robot, base_value)
+                            at_base = True
+                            break
                     at_base = True
+                    break
+        else:
+            print("None")
+
+def rtb_updated(robot,motor,base,vision,motion,rotate_power):
+    basefound = False
+    while not basefound:
+        values, base_value = rtb_find(robot,vision,motion,rotate_power,base)
+        if values[0]:
+            basefound = True
+    atBase = False # not needed anymore
+    while values[0] > 1000:
+        turn_to_marker(motor,0.75,values[1],0.00005)
+        drive_to_marker(motor,0.6,values[0],1000)
+        print(values[0])
+        try:
+            values = vision.distance_update(robot,base_value)
+            try:
+                if values[0]:
+                    pass
+            except:
+                motion.stop(motor)
+                robot.sleep(0.5)
+                values = vision.distance_update(robot,base_value)
         except:
-            pass
+            while not basefound:
+                print("Lost...")
+                values, base_value = rtb_find(robot, vision, motion, rotate_power, base)
+                if values[0]:
+                    basefound = True
+
+
+
+
 
 
 def position_scan(org_zones, robot, motor):
