@@ -49,8 +49,8 @@ base = position.zone_parse(zone)  # give our zone  id's to robot
 
 # -- main run loop --
 behaviour.set_motion(motion)  # parse the motion script to behaviour
-manipulator.open_gripper(arm_board, 1)
-robot.sleep(1)
+manipulator.open_gripper(arm_board, 0.5)
+robot.sleep(1.2)
 manipulator.stop_gripper(arm_board)
 # reset gripper
 while True:
@@ -101,7 +101,7 @@ while True:
                         print(f"Found Marker: {id}")
             if distance > stopping_distance:
                 power = behaviour.dynamic_speed(distance)
-                if angle > 5 * (3.14159) / 180:  # if the angle is too great, stop moving
+                if angle > 5 * (3.14159265) / 180:  # if the angle is too great, stop moving
                     print("f[{id}] Angle too great, initaiting turn")
                     motion.stop(motor_board)
                     behaviour.turn_to_marker(motor_board, 0.2, angle, angle_thresh)
@@ -122,16 +122,18 @@ while True:
                 manipulator.stop_arm(arm_board)
                 robot.sleep(0.5)
                 print("closing grip")
-                manipulator.close_gripper(arm_board, 1)
-                robot.sleep(1)
+                manipulator.close_gripper(arm_board, 0.7)
+                robot.sleep(1.9)
                 manipulator.stop_gripper(arm_board)
                 robot.sleep(1)
                 print("raising arm")
-                manipulator.raise_arm(arm_board, 1)
+                manipulator.raise_arm(arm_board, 0.8)
                 robot.sleep(2)
                 manipulator.stop_arm(arm_board)
                 print("Ready To RTB")
-                behaviour.rtb(robot, motor_board, base, vision, motion, rotat_power)
+                behaviour.rtb_updated(robot, motor_board, base, vision, motion, rotat_power)
+                print("Stopping")
+                motion.stop(motor_board)
                 manipulator.open_gripper(arm_board,0.7)
                 manipulator.lower_arm(arm_board,0.5)
                 print("Asteroid Dumped")
@@ -143,6 +145,9 @@ while True:
                 motion.forward(motor_board,0.7)
                 robot.sleep(0.4)
                 motion.stop(motor_board)
+                manipulator.raise_arm(arm_board,0.7)
+                robot.sleep(1)
+                manipulator.stop_arm(arm_board)
                 print("NEXT BOX")
             else:
                 motion.stop(motor_board)
