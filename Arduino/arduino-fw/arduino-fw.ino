@@ -9,7 +9,7 @@ const int echoPin = 12;
 
 const int trigDuration = 10;
 const float soundSpeed = 0.343;// speed of sound in mm per ms
-const int minDist = 400;
+const int minDist = 70;
 const int delayVal = 5;
 
 const int redPin = 7;
