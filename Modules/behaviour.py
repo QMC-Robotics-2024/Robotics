@@ -196,6 +196,15 @@ def rtb_updated(robot,motor,base,vision,motion,rotate_power):
                 motion.stop(motor)
                 robot.sleep(0.5)
                 values = vision.distance_update(robot,base_value)
+                try:
+                    if values[0]:
+                        pass
+                except:
+                    basefound = False
+                    while not basefound:
+                        values, base_value = rtb_find(robot, vision, motion, rotate_power, base)
+                        if values[0]:
+                            basefound = True
         except:
             while not basefound:
                 print("Lost...")
