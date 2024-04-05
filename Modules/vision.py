@@ -12,7 +12,7 @@ Assumptions I am making:
 
 # ini
 # this function runs first to initally find an asteroid, and returns the closest asteroid
-def vision_run(robot, save=False, dev=False):
+def vision_run(robot, include, save=False, dev=False):
     if not dev:
         # cv2 will allow us to adjust image info and make manipulations such as contrast if needed
         frame = robot.camera.capture()
@@ -21,7 +21,14 @@ def vision_run(robot, save=False, dev=False):
     else:  # capture doesnt work in simulation
         markers = robot.camera.see()
 
-    current_markers = markers
+    precheck_markers = markers
+    current_markers = []
+
+    for markers in precheck_markers:
+        if markers.id in include:
+            print(markers)
+            current_markers.append(markers)
+
     if not markers:
         current_markers.clear()
         return False
@@ -35,9 +42,8 @@ def marker_sort(current_markers):
     """sort markers by distance"""
     sorted_markers = []
     for marker in current_markers:
-        if marker.id not in [i for i in range(0,29)]:
-            position = markerpos(marker)
-            sorted_markers.append(position)
+        position = markerpos(marker)
+        sorted_markers.append(position)
     sorted(sorted_markers, key=lambda x: x[3])  # element at index 3 is distance
     target_marker = current_markers[current_markers.index(sorted_markers[0][0])]
     return target_marker
