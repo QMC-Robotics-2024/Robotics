@@ -5,6 +5,11 @@ planet_1 = [i for i in range(7,14)]
 planet_2 = [i for i in range(14,21)]
 planet_3 = [i for i in range(21,28)]
 
+spaceship_0 = [120,125]
+spaceship_1 = [121,126]
+spaceship_2 = [122,127]
+spaceship_3 = [123,128]
+
 planets = [planet_0,planet_1,planet_2,planet_3]
 
 
@@ -19,13 +24,17 @@ def zone_parse(zone: int) -> list[int]:
     match zone:
         case 0:
             base = planet_0
+            spaceship = spaceship_0
         case 1:
             base = planet_1
+            spaceship = spaceship_1
         case 2:
             base = planet_2
+            spaceship = spaceship_2
         case 3:
             base = planet_3
-    return base
+            spaceship = spaceship_3
+    return base, spaceship
 
 
 def organise(base: list) -> list: # home, left, opposite, right
