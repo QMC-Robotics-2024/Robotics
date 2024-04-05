@@ -41,22 +41,27 @@ robot.power_board.outputs[OUT_H0].is_enabled = True
 arduino = robot.arduino  # using extended SR firmware (no reason really tbh)
 current_markers = []
 mode = robot.mode
+'''
 if mode == "COMP":
     zone = robot.zone
 else:
     zone = dev_zone
-base = position.zone_parse(zone)  # give our zone  id's to robot
+    '''
+zone = robot.zone
+base, spaceship = position.zone_parse(zone)  # give our zone  id's to robot
 
 # -- main run loop --
 behaviour.set_motion(motion)  # parse the motion script to behaviour
 manipulator.open_gripper(arm_board, 0.5)
 robot.sleep(1.2)
 manipulator.stop_gripper(arm_board)
+
+include = [x for x in range(150, 200)]
 # reset gripper
 while True:
     try:
         # inital search for a marker
-        movement_values, target_marker, current_markers = vision.vision_run(robot, False, dev)
+        movement_values, target_marker, current_markers = vision.vision_run(robot, include, False, dev)
         id = target_marker.id
     except TypeError:  # if no markers found set the values to empty
         movement_values = []
@@ -84,7 +89,7 @@ while True:
                     # it can no longer find the marker, so update it
                     print(f"[{id}] Lost Marker, Final Check")
                     try:
-                        movement_values, target_marker, current_markers = vision.vision_run(robot, False, dev)
+                        movement_values, target_marker, current_markers = vision.vision_run(robot, include, False, dev)
                         distance, angle = vision.distance_update(robot, target_marker.id)  # try one last time
                     except TypeError:  # cant see any so start scanning
                         print(f"Lost Marker [{id}]")
@@ -95,7 +100,7 @@ while True:
                             print("Scanning...")
                             current_markers = behaviour.scan_for_markers(robot, rotate_increment_speed, scan_duration,
                                                                          check_duration)
-                        movement_values, target_marker, current_markers = vision.vision_run(robot, False, dev)
+                        movement_values, target_marker, current_markers = vision.vision_run(robot, include, False, dev)
                         id = target_marker.id
                         distance, angle = vision.distance_update(robot, id)
                         print(f"Found Marker: {id}")
@@ -132,7 +137,58 @@ while True:
                 manipulator.stop_arm(arm_board)
                 print("Ready To RTB")
                 behaviour.rtb_updated(robot, motor_board, base, vision, motion, rotat_power)
-                print("Stopping")
+                motion.stop(motor_board)
+                robot.sleep(1)
+                try:
+                    for i in range(0,5):
+                        motion.turn_anticlockwise(motor_board, rotat_power)
+                        robot.sleep(0.3)
+                        motion.stop(motor_board)
+                        print("Can I see Spaceship")
+                        robot.sleep(1)
+                        try:
+                            movement_values, target_marker, current_markers = vision.vision_run(robot, [120, 125], False,
+                                                                                                dev)
+                            if target_marker.id in spaceship:
+                                print("Can see it")
+                                break
+                        except:
+                            pass
+
+                    if target_marker.id in spaceship:
+                        print("I can")
+                        distance, angle = vision.distance_update(robot, target_marker.id)
+                        while distance > 25:
+                            behaviour.turn_to_marker(motor_board,rotat_power,angle,0.000005)
+                            behaviour.drive_to_marker(motor_board,power,distance,25)
+                            try:
+                                distance, angle = vision.distance_update(robot, target_marker.id)
+                                if distance:
+                                    pass
+                            except:
+                                motion.stop(motor_board)
+                                distance = 0
+
+                except:
+                    pass
+                manipulator.lower_arm(arm_board,0.5)
+                robot.sleep(1)
+                manipulator.stop_arm(arm_board)
+                manipulator.open_gripper(arm_board, 0.7)
+                robot.sleep(0.4)
+                manipulator.stop_gripper(arm_board)
+                manipulator.raise_arm(arm_board,0.7)
+                robot.sleep(1)
+                manipulator.stop_arm(arm_board)
+                motion.reverse(motor_board, 0.6)
+                robot.sleep(1)
+                motion.stop(motor_board)
+                motion.turn_anticlockwise(motor_board, 0.5)
+                robot.sleep(0.7)
+                motion.stop(motor_board)
+                print("Next Box")
+
+                '''
                 motion.stop(motor_board)
                 manipulator.open_gripper(arm_board,0.7)
                 manipulator.lower_arm(arm_board,0.5)
@@ -149,6 +205,7 @@ while True:
                 robot.sleep(1)
                 manipulator.stop_arm(arm_board)
                 print("NEXT BOX")
+                '''
             else:
                 motion.stop(motor_board)
     elif not movement_values:
