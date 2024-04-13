@@ -31,7 +31,7 @@ def scan_for_markers(robot, rotate_power, scan_duration, check_duration):
         scan_time = time.time() + scan_duration # time it moves until
         print("[BEHAVIOUR] Beginning My Scan")
         while time.time() < scan_time:
-            motion.turn_clockwise(robot.motor_boards["SR0GBT"], rotate_power)  # move until time
+            motion.turn_anticlockwise(robot.motor_boards["SR0GBT"], rotate_power)  # move until time
         motion.stop(robot.motor_boards["SR0GBT"])  # stop moving
         check_time = time.time() + check_duration
         """
@@ -85,7 +85,7 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, ro
     :return:
     """
     steps = 3  # used for calculating mean
-    distance, start_distance = int(arudino.command("s"))  # get inital distance from ultrasonic sensor
+    distance= int(arudino.command("s"))# get inital distance from ultrasonic sensor
     while distance > sensor_min:  # this will permanetly run until our min distanec
         steps_count = []
         motion.forward(motor_board, power)
@@ -95,8 +95,6 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, ro
         distance = sum(steps_count) // steps # workout mean distance
         print(f"[ARDUINO]: {distance}")
         try:
-            if distance + 100 > start_distance:
-                return False
             values = vision.distance_update(robot, target.id)  # final rotate
             turn_to_marker(motor_board, 0.1, values[1], 0.005)
             robot.sleep(0.25)
@@ -104,8 +102,7 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, ro
             motion.forward(motor_board, power)
             print("ARDUINO ROTATE", values[1])  # rotate if can
         except:
-            angle = 0
-    return True# if it can no longer get data from camera,
+            angle = 0# if it can no longer get data from camera,
 
 
 def dynamic_speed(distance):

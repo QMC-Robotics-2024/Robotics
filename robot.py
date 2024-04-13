@@ -122,11 +122,9 @@ while True:
                     behaviour.drive_to_marker(motor_board, power, distance, stopping_distance)
             elif distance <= stopping_distance:
                 print("[ARDUINO ACTIVE]")
-                check = behaviour.ultrasonic_drive(motor_board, arduino_speed, arduino, arduino_min, vision, target_marker,
+                behaviour.ultrasonic_drive(motor_board, arduino_speed, arduino, arduino_min, vision, target_marker,
                                            robot)
                 # move until positioned well
-                if not check:
-                    break
                 print("*" * 15)
                 print("[ARM] Iniating Pickup Procedure")
                 motion.stop(motor_board)  # in position
