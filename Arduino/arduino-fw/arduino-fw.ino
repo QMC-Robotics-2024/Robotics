@@ -17,6 +17,10 @@ const int greenPin = 6;
 long duration;
 int distance;
 
+const int switchOut = 9;
+const int switchIn = 10;
+
+int state = 0;
 void setup() {
   Serial.begin(SERIAL_BAUD);
   pinMode(trigPin, OUTPUT);
@@ -24,6 +28,9 @@ void setup() {
 
   pinMode(redPin, OUTPUT);
   pinMode(greenPin, OUTPUT);
+
+  pinMode(switchOut, OUTPUT);
+  pinMode(switchIn, INPUT);
 }
 
 int read_pin() {
@@ -82,6 +89,16 @@ void sensor_value(){
   Serial.print(distance);
 
 }
+void check_switches(){
+  digitalWrite(switchOut, HIGH);
+  state = digitalRead(switchIn);
+  if (state == HIGH){
+    Serial.print("True");
+  }
+  else{
+    Serial.print("False");
+  }
+}
 void loop() {
   // Fetch all commands that are in the buffer
   while (Serial.available()) {
@@ -115,6 +132,9 @@ void loop() {
         break;
       case 's':
         sensor_value();
+        break;
+      case 'x':
+        check_switches();
         break;
       default:
         // A problem here: we do not know how to handle the command!
