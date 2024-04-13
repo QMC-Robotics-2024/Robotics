@@ -142,6 +142,15 @@ while True:
                 manipulator.raise_arm(arm_board, 0.8)
                 robot.sleep(2)
                 manipulator.stop_arm(arm_board)
+                check = behaviour.check_switch(arduino)
+                if check:
+                    pass
+                elif not check:
+                    motion.reverse(motor_board, power)
+                    manipulator.open_gripper(arm_board, 0.5)
+                    robot.sleep(0.8)
+                    manipulator.stop_gripper(arm_board)
+                    continue
                 print("Ready To RTB")
                 behaviour.rtb_updated(robot, motor_board, base, vision, motion, rotat_power)
                 motion.stop(motor_board)

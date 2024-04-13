@@ -73,6 +73,15 @@ def drive_to_marker(motor_board, power, distance, min):
     else:
         motion.stop(motor_board)
 
+def check_switch(arduino):
+    check = arduino.command("x")
+    print(check)
+    if check == "True":
+        return True
+    elif check == "False":
+        return False
+    else:
+        raise "TF"
 
 def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, robot):
     """

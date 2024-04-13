@@ -1,20 +1,20 @@
 import math
+
 # define all planet id's
-planet_0 = [i for i in range(2,5)]
-planet_1 = [i for i in range(9,12)]
-planet_2 = [i for i in range(16,19)]
-planet_3 = [i for i in range(23,26)]
+planet_0 = [i for i in range(2, 5)]
+planet_1 = [i for i in range(9, 12)]
+planet_2 = [i for i in range(16, 19)]
+planet_3 = [i for i in range(23, 26)]
 
-spaceship_0 = [120,125]
-spaceship_1 = [121,126]
-spaceship_2 = [122,127]
-spaceship_3 = [123,128]
+spaceship_0 = [120, 125]
+spaceship_1 = [121, 126]
+spaceship_2 = [122, 127]
+spaceship_3 = [123, 128]
 
-planets = [planet_0,planet_1,planet_2,planet_3]
+planets = [planet_0, planet_1, planet_2, planet_3]
 
 
 def zone_parse(zone: int) -> list[int]:
-
     """
     Checks which zone the robot is in
     :param zone: the starting zone the robot is placed in
@@ -37,14 +37,15 @@ def zone_parse(zone: int) -> list[int]:
     return base, spaceship
 
 
-def organise(base: list) -> list: # home, left, opposite, right
+def organise(base: list) -> list:  # home, left, opposite, right
     org_zones = []
-    for i in range(0,4):
+    for i in range(0, 4):
         index = (planets.index(base) + i) % len(planets)
         trg_base = planets[index]
         # trg_mid = sum(trg_base) // len(trg_base)
         org_zones.append(trg_base)
     return org_zones
+
 
 '''
 Scan for positional markers
