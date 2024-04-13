@@ -34,8 +34,10 @@ def vision_run(robot, include, save=False, dev=False):
         return False
     elif markers:
         target_marker = marker_sort(current_markers)
-        move_values = movement_calculate(target_marker)
-        return move_values, target_marker, current_markers
+        if target_marker:
+            move_values = movement_calculate(target_marker)
+            return move_values, target_marker, current_markers
+    return False
 
 
 def marker_sort(current_markers):
@@ -44,9 +46,11 @@ def marker_sort(current_markers):
     for marker in current_markers:
         position = markerpos(marker)
         sorted_markers.append(position)
-    sorted(sorted_markers, key=lambda x: x[3])  # element at index 3 is distance
-    target_marker = current_markers[current_markers.index(sorted_markers[0][0])]
-    return target_marker
+    if sorted_markers:
+        sorted_markers = sorted(sorted_markers, key=lambda x: x[3])  # element at index 3 is distance
+        target_marker = current_markers[current_markers.index(sorted_markers[0][0])]
+        return target_marker
+    return False
 
 
 def markerpos(marker):

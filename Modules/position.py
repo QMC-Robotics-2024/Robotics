@@ -1,9 +1,9 @@
 import math
 # define all planet id's
-planet_0 = [i for i in range(0,7)]
-planet_1 = [i for i in range(7,14)]
-planet_2 = [i for i in range(14,21)]
-planet_3 = [i for i in range(21,28)]
+planet_0 = [i for i in range(2,5)]
+planet_1 = [i for i in range(9,12)]
+planet_2 = [i for i in range(16,19)]
+planet_3 = [i for i in range(23,26)]
 
 spaceship_0 = [120,125]
 spaceship_1 = [121,126]

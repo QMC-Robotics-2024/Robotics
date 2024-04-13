@@ -85,7 +85,7 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, ro
     :return:
     """
     steps = 3  # used for calculating mean
-    distance = int(arudino.command("s"))  # get inital distance from ultrasonic sensor
+    distance, start_distance = int(arudino.command("s"))  # get inital distance from ultrasonic sensor
     while distance > sensor_min:  # this will permanetly run until our min distanec
         steps_count = []
         motion.forward(motor_board, power)
@@ -95,6 +95,8 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, ro
         distance = sum(steps_count) // steps # workout mean distance
         print(f"[ARDUINO]: {distance}")
         try:
+            if distance + 100 > start_distance:
+                return False
             values = vision.distance_update(robot, target.id)  # final rotate
             turn_to_marker(motor_board, 0.1, values[1], 0.005)
             robot.sleep(0.25)
@@ -102,7 +104,8 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, ro
             motion.forward(motor_board, power)
             print("ARDUINO ROTATE", values[1])  # rotate if can
         except:
-            angle = 0  # if it can no longer get data from camera,
+            angle = 0
+    return True# if it can no longer get data from camera,
 
 
 def dynamic_speed(distance):
@@ -111,7 +114,7 @@ def dynamic_speed(distance):
     :param distance:
     :return:
     """
-    speed_distance = [[500, 0.25], [800, 0.4], [1200, 0.5], [4000, 0.65], [40000000, 0.7]]  # overflow value
+    speed_distance = [[500, 0.6], [800, 0.7], [1200, 0.8], [4000, 0.9], [40000000, 1]]  # overflow value
     try:
         for i in range(len(speed_distance)):
             if speed_distance[i][0] <= distance <= speed_distance[i + 1][0]:

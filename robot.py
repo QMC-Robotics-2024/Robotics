@@ -19,8 +19,8 @@ behaviour.py - ltitteraly everything
 dev = True  # developer mode
 dev_zone = 0
 
-power = 0.7
-rotat_power = 0.85
+power = 0.9
+rotat_power = 0.95
 
 stopping_distance = 500  # mm, distance from marker robot should stop and switch to ultrasonic
 
@@ -30,7 +30,7 @@ scan_duration = 0.5  # how long it turns for when scanning
 check_duration = 0.35  # how long it checks for
 rotate_increment_speed = 0.5
 
-arduino_speed = 0.314159265
+arduino_speed = 0.4
 arduino_min = 70  # distance in mm arduino stops robot
 # -- boards --
 robot = Robot()
@@ -51,12 +51,15 @@ zone = robot.zone
 base, spaceship = position.zone_parse(zone)  # give our zone  id's to robot
 
 # -- main run loop --
-behaviour.set_motion(motion)  # parse the motion script to behaviour
-manipulator.open_gripper(arm_board, 0.5)
+behaviour.set_motion(motion)
+# parse the motion script to behaviour
+manipulator.raise_arm(arm_board, 0.6)
+manipulator.open_gripper(arm_board, 0.45)
 robot.sleep(1.2)
 manipulator.stop_gripper(arm_board)
+manipulator.stop_arm(arm_board)
 
-include = [x for x in range(150, 200)]
+include = [x for x in range(149, 200)]
 # reset gripper
 while True:
     try:
@@ -100,13 +103,16 @@ while True:
                             print("Scanning...")
                             current_markers = behaviour.scan_for_markers(robot, rotate_increment_speed, scan_duration,
                                                                          check_duration)
-                        movement_values, target_marker, current_markers = vision.vision_run(robot, include, False, dev)
-                        id = target_marker.id
-                        distance, angle = vision.distance_update(robot, id)
-                        print(f"Found Marker: {id}")
+                        try:
+                            movement_values, target_marker, current_markers = vision.vision_run(robot, include, False, dev)
+                            id = target_marker.id
+                            distance, angle = vision.distance_update(robot, id)
+                            print(f"Found Marker: {id}")
+                        except:
+                            pass
             if distance > stopping_distance:
                 power = behaviour.dynamic_speed(distance)
-                if angle > 5 * (3.14159265) / 180:  # if the angle is too great, stop moving
+                if angle > 10 * (3.14159265) / 180:  # if the angle is too great, stop moving
                     print("f[{id}] Angle too great, initaiting turn")
                     motion.stop(motor_board)
                     behaviour.turn_to_marker(motor_board, 0.2, angle, angle_thresh)
@@ -116,8 +122,11 @@ while True:
                     behaviour.drive_to_marker(motor_board, power, distance, stopping_distance)
             elif distance <= stopping_distance:
                 print("[ARDUINO ACTIVE]")
-                behaviour.ultrasonic_drive(motor_board, arduino_speed, arduino, arduino_min, vision, target_marker,
-                                           robot)  # move until positioned well
+                check = behaviour.ultrasonic_drive(motor_board, arduino_speed, arduino, arduino_min, vision, target_marker,
+                                           robot)
+                # move until positioned well
+                if not check:
+                    break
                 print("*" * 15)
                 print("[ARM] Iniating Pickup Procedure")
                 motion.stop(motor_board)  # in position
@@ -141,13 +150,13 @@ while True:
                 robot.sleep(1)
                 try:
                     for i in range(0,5):
-                        motion.turn_anticlockwise(motor_board, rotat_power)
-                        robot.sleep(0.3)
+                        motion.turn_anticlockwise(motor_board, rotat_power - 0.15)
+                        robot.sleep(0.2)
                         motion.stop(motor_board)
                         print("Can I see Spaceship")
                         robot.sleep(1)
                         try:
-                            movement_values, target_marker, current_markers = vision.vision_run(robot, [120, 125], False,
+                            movement_values, target_marker, current_markers = vision.vision_run(robot, spaceship, False,
                                                                                                 dev)
                             if target_marker.id in spaceship:
                                 print("Can see it")
@@ -156,11 +165,16 @@ while True:
                             pass
 
                     if target_marker.id in spaceship:
-                        print("I can")
+                        include.remove(id)
+                        tmp = 0.5
+                        print("I can") # if it can see the ship, assume it places it in there, and ignore that block
                         distance, angle = vision.distance_update(robot, target_marker.id)
-                        while distance > 25:
+                        while distance > 10:
+                            print("drive")
+                            if distance < 70:
+                                tmp = 0.3
                             behaviour.turn_to_marker(motor_board,rotat_power,angle,0.000005)
-                            behaviour.drive_to_marker(motor_board,power,distance,25)
+                            behaviour.drive_to_marker(motor_board,tmp,distance,25)
                             try:
                                 distance, angle = vision.distance_update(robot, target_marker.id)
                                 if distance:
@@ -168,6 +182,9 @@ while True:
                             except:
                                 motion.stop(motor_board)
                                 distance = 0
+                                motion.turn_clockwise(motor_board,0.2)
+                                robot.sleep(0.3)
+                                motion.stop(motor_board)
 
                 except:
                     pass
@@ -229,6 +246,7 @@ duration = movement.angle_to_duration(movement_values[0], angle_thresh)
                     movement.turn_anticlockwise(motor_board, rotat_power)
 
 """
+
 
 # SR0GBT
 # SR0RG1U
