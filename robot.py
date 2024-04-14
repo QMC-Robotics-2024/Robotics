@@ -15,6 +15,8 @@ position.py - info about pos -
 behaviour.py - ltitteraly everything 
 
 '''
+#robot.activateFreakMode()
+
 # -- constants --
 dev = True  # developer mode
 dev_zone = 0
@@ -32,6 +34,7 @@ rotate_increment_speed = 0.5
 
 arduino_speed = 0.4
 arduino_min = 70  # distance in mm arduino stops robot
+arduino_timeout = 12 # max time arduino can be used before stopping
 # -- boards --
 robot = Robot()
 motor_board = robot.motor_boards["SR0GBT"]
@@ -122,9 +125,11 @@ while True:
                     behaviour.drive_to_marker(motor_board, power, distance, stopping_distance)
             elif distance <= stopping_distance:
                 print("[ARDUINO ACTIVE]")
-                behaviour.ultrasonic_drive(motor_board, arduino_speed, arduino, arduino_min, vision, target_marker,
-                                           robot)
+                check2 = behaviour.ultrasonic_drive(motor_board, arduino_speed, arduino, arduino_min, vision, target_marker,
+                                           robot, arduino_timeout)
                 # move until positioned well
+                if not check2:
+                    continue
                 print("*" * 15)
                 print("[ARM] Iniating Pickup Procedure")
                 motion.stop(motor_board)  # in position

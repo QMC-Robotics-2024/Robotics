@@ -74,7 +74,7 @@ def drive_to_marker(motor_board, power, distance, min):
         motion.stop(motor_board)
 
 
-def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, robot):
+def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, robot, arduino_timeout):
     """
     This drives the robot at a slower speed using distance from the serial output
     of the arduino, until the distance is at a certain value
@@ -84,9 +84,13 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, ro
     :param sensor_min:
     :return:
     """
+    timeout = time.time() + arduino_timeout
     steps = 3  # used for calculating mean
     distance= int(arudino.command("s"))# get inital distance from ultrasonic sensor
-    while distance > sensor_min:  # this will permanetly run until our min distanec
+    while distance > sensor_min:
+        if time.time() > timeout:
+            return False # if is after out timeout, stop
+        # this will permanetly run until our min distanec or timeout
         steps_count = []
         motion.forward(motor_board, power)
         for i in range(steps):
@@ -103,7 +107,7 @@ def ultrasonic_drive(motor_board, power, arudino, sensor_min, vision, target, ro
             print("ARDUINO ROTATE", values[1])  # rotate if can
         except:
             angle = 0# if it can no longer get data from camera,
-
+    return True
 
 def dynamic_speed(distance):
     """
